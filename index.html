@@ -1,0 +1,4319 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <base target="_top">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WMS - Warehouse Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+      :root {
+        --primary: #2563eb; 
+        --primary-light: #eff6ff;
+        --secondary: #f59e0b;
+        --secondary-dark: #d97706;
+        --success: #10b981; 
+        --danger: #ef4444;
+        --bg-body: #f1f5f9; 
+        --bg-card: #ffffff;
+        --text-main: #1e293b; 
+        --text-muted: #64748b;
+        --border: #e2e8f0; 
+        --radius: 12px;
+        --shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+      }
+      
+      * { box-sizing: border-box; }
+      body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; padding: 10px; font-size: 14px; }
+      .hidden-by-js { display: none !important; }
+
+      /* APP LAYOUT */
+      .app-container { max-width: 100%; margin: 0 auto; }
+      header { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; }
+      @media (min-width: 768px) { header { flex-direction: row; justify-content: space-between; align-items: center; } }
+      header {
+        padding:10px 22px !important;
+        overflow:visible !important;
+        box-sizing:border-box;
+      }
+
+      .brand {
+
+        display:flex;
+        align-items:center;
+        gap:14px;
+        color:#07111f;
+        font-family:"Samsung Sharp Sans","SamsungOne","Space Grotesk","Inter",Arial,sans-serif;
+        user-select:none;
+      }
+
+      .brand {
+        flex:0 0 auto;
+        min-width:0;
+        overflow:visible;
+        padding:1px 0;
+      }
+      .brand-mark {
+        flex:0 0 46px;
+        width:46px;
+        height:46px;
+        margin-left:2px;
+        margin-right:0;
+        overflow:visible;
+      }
+      .brand-logo-svg {
+        width:46px;
+        height:46px;
+        overflow:visible;
+      }
+      .brand-copy {
+        min-width:0;
+        overflow:visible;
+        padding-right:4px;
+      }
+      .brand-subtitle {
+        overflow:visible;
+      }
+
+      .brand-logo-svg {
+        width:100%;
+        height:100%;
+        display:block;
+      }
+      .brand-logo-svg text {
+        paint-order:stroke;
+        stroke:rgba(6,24,67,.08);
+        stroke-width:.35px;
+      }
+
+      .brand-mark {
+        width:46px;
+        height:46px;
+        flex:0 0 46px;
+        display:grid;
+        place-items:center;
+        position:relative;
+        border-radius:13px;
+        background:
+          radial-gradient(circle at 28% 20%, rgba(255,255,255,.38), transparent 34%),
+          linear-gradient(145deg,#0b74ff 0%,#3156ff 43%,#101827 100%);
+        box-shadow:
+          0 12px 28px rgba(23,76,199,.24),
+          inset 0 1px 0 rgba(255,255,255,.34),
+          inset 0 -8px 18px rgba(2,10,24,.18);
+        overflow:hidden;
+      }
+      .brand-mark::before {
+        content:"";
+        position:absolute;
+        inset:7px;
+        border:1px solid rgba(255,255,255,.18);
+        border-radius:9px;
+      }
+      .brand-mark::after {
+        content:"";
+        position:absolute;
+        width:29px;
+        height:29px;
+        border-radius:9px;
+        border:1.2px solid rgba(255,255,255,.28);
+        transform:rotate(45deg);
+      }
+      .brand-wms {
+        position:relative;
+        z-index:3;
+        display:none;
+      }
+      .brand-copy {
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        line-height:1;
+      }
+      .brand-subtitle {
+        margin-top:0;
+        font-family:"Samsung Sharp Sans","SamsungOne","Space Grotesk","Inter",Arial,sans-serif;
+        font-size:12px;
+        font-weight:700;
+        letter-spacing:.115em;
+        text-transform:uppercase;
+        color:#0b1728;
+        white-space:nowrap;
+      }
+      .brand-group { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+      @media (min-width: 768px) { .brand-group { width: auto; } }
+
+      @media (max-width: 600px) {
+        header {
+          padding:8px 16px !important;
+          min-height:58px;
+        }
+        .brand {
+          gap:11px;
+        }
+        .brand-mark,
+        .brand-logo-svg {
+          width:40px;
+          height:40px;
+          flex-basis:40px;
+        }
+        .brand-subtitle {
+          font-size:8.5px;
+          letter-spacing:.075em;
+        }
+
+        .brand-mark { width:40px; height:40px; flex-basis:40px; border-radius:12px; }
+        .brand-logo-svg { width:40px; height:40px; }
+        .brand-subtitle { font-size:9px; letter-spacing:.09em; }
+      }
+
+      .nav-tabs { display: flex; background: white; padding: 5px; border-radius: var(--radius); box-shadow: var(--shadow); overflow-x: auto; gap: 5px; }
+      .nav-btn { background: none; border: none; padding: 10px 20px; cursor: pointer; border-radius: 8px; font-weight: 600; color: var(--text-muted); white-space: nowrap; flex: 1; transition: 0.2s; }
+      .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2); }
+
+      /* GENERAL UI */
+      .card { background: var(--bg-card); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 20px; }
+      .page-section { display: none !important; }
+      .page-section.active { display: block !important; animation: fadeIn 0.4s; }
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+      .form-row { display: grid; gap: 15px; grid-template-columns: 1fr; margin-bottom: 15px; }
+      @media(min-width: 768px){ .form-row { grid-template-columns: 1fr 1fr; } }
+      input, select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: #fff; }
+      .btn-add { background: var(--secondary); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: 600; cursor: pointer; transition: 0.2s; }
+      .btn-primary { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 8px; width: 100%; font-weight: 600; cursor: pointer; font-size: 16px; transition: 0.2s; }
+      .btn-danger { background: var(--danger); color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; }
+      .btn-danger:hover { background: #b91c1c; }
+      .table-wrapper { overflow-x: auto; margin-bottom: 10px; width: 100%; }
+      table { width: 100%; border-collapse: collapse; min-width: 600px; }
+      th { text-align: left; padding: 12px; background: #f8fafc; border-bottom: 2px solid var(--border); white-space: nowrap; }
+      td { padding: 12px; border-bottom: 1px solid var(--border); }
+      
+      /* Modals and Notifications */
+
+      /* Lightweight startup state: no animated loading overlay. */
+      #loading {
+        display: none !important;
+      }
+      
+      /* Smart FIFO Recommendation Box */
+      .fifo-box { background: #eff6ff; border: 1px dashed var(--primary); padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 12px; display: none; }
+      .fifo-box.active { display: block; }
+
+      /* ================================
+         WMS AI COPILOT + VOICE ASSISTANT
+         ================================ */
+
+      /* ================================
+         WMS UI SOUNDS
+         Lightweight, optional, browser-safe
+         ================================ */
+      .ui-sound-enabled .sound-indicator {
+        opacity: 1;
+      }
+
+      /* ================================
+         WMS AI COPILOT SIDEBAR
+         Hover preview + click to pin/open
+         ================================ */
+      .ai-sidebar {
+        position: fixed;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 2000;
+        display:flex;
+        align-items:center;
+        pointer-events:none;
+      }
+      .ai-sidebar-tab {
+        pointer-events:auto;
+        width:58px;
+        min-height:116px;
+        border:1px solid rgba(148,163,184,.18);
+        border-right:none;
+        border-radius:16px 0 0 16px;
+        background:linear-gradient(180deg,#0f172a,#172554);
+        color:#fff;
+        box-shadow:0 14px 35px rgba(15,23,42,.25);
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        gap:8px;
+        cursor:pointer;
+        transition:width .18s ease, transform .18s ease, box-shadow .18s ease;
+      }
+      .ai-sidebar-tab:hover,
+      .ai-sidebar.is-open .ai-sidebar-tab {
+        width:66px;
+        transform:translateX(-2px);
+        box-shadow:0 16px 38px rgba(15,23,42,.34);
+      }
+      .ai-sidebar-icon { font-size:22px; line-height:1; }
+      .ai-sidebar-label {
+        font-size:10px;
+        line-height:1.05;
+        font-weight:800;
+        letter-spacing:.4px;
+        text-align:center;
+        color:#dbeafe;
+      }
+
+      .ai-copilot-panel {
+        position:absolute;
+        right:58px;
+        top:50%;
+        width:min(430px, calc(100vw - 86px));
+        transform:translate(14px,-50%) scale(.985);
+        opacity:0;
+        visibility:hidden;
+        pointer-events:none;
+        transition:opacity .16s ease, transform .16s ease, visibility .16s ease;
+      }
+      .ai-sidebar:hover .ai-copilot-panel,
+      .ai-sidebar.is-open .ai-copilot-panel {
+        opacity:1;
+        visibility:visible;
+        pointer-events:auto;
+        transform:translate(0,-50%) scale(1);
+      }
+
+      .ai-copilot {
+        margin-bottom:0;
+        width:100%;
+        box-sizing:border-box;
+        box-shadow:0 18px 55px rgba(15,23,42,.30);
+      }
+      .ai-panel-actions {
+        display:flex;
+        align-items:center;
+        gap:10px;
+      }
+      .ai-panel-close {
+        width:30px;
+        height:30px;
+        padding:0;
+        border:1px solid rgba(255,255,255,.16);
+        border-radius:8px;
+        background:rgba(255,255,255,.08);
+        color:#fff;
+        font-size:20px;
+        line-height:1;
+        cursor:pointer;
+      }
+      .ai-panel-close:hover { background:rgba(255,255,255,.16); }
+
+      .ai-copilot {
+        background: linear-gradient(135deg, #0f172a 0%, #172554 55%, #1e3a8a 100%);
+        color: #fff;
+        border-radius: 16px;
+        padding: 18px;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 30px rgba(15,23,42,.18);
+      }
+      .ai-head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px; }
+      .ai-title { display:flex; align-items:center; gap:10px; font-weight:700; }
+      .ai-status { font-size:11px; color:#cbd5e1; display:flex; align-items:center; gap:6px; }
+      .ai-dot { width:8px; height:8px; border-radius:50%; background:#10b981; box-shadow:0 0 0 4px rgba(16,185,129,.12); }
+      .ai-chat {
+        background:rgba(255,255,255,.08);
+        border:1px solid rgba(255,255,255,.12);
+        border-radius:12px;
+        padding:12px;
+        max-height:250px;
+        overflow:auto;
+        margin-bottom:12px;
+      }
+      .ai-msg { display:flex; margin:8px 0; }
+      .ai-msg.user { justify-content:flex-end; }
+      .ai-bubble {
+        max-width:85%;
+        padding:9px 12px;
+        border-radius:12px;
+        line-height:1.45;
+        font-size:13px;
+        white-space:pre-wrap;
+      }
+      .ai-msg.assistant .ai-bubble { background:rgba(255,255,255,.1); color:#e2e8f0; }
+      .ai-msg.user .ai-bubble { background:#2563eb; color:#fff; }
+      .ai-input-row { display:grid; grid-template-columns:1fr auto auto; gap:8px; }
+      .ai-input-row input {
+        background:#fff; color:#0f172a; border:none; min-width:0;
+      }
+      .ai-btn {
+        border:1px solid rgba(255,255,255,.18);
+        background:rgba(255,255,255,.1);
+        color:#fff;
+        border-radius:9px;
+        min-width:46px;
+        padding:10px 12px;
+        cursor:pointer;
+        font-weight:600;
+      }
+      .ai-btn:hover { background:rgba(255,255,255,.18); }
+      .ai-btn.listening { background:#dc2626; animation:voicePulse 1.2s infinite; }
+      .ai-btn.send { background:#2563eb; border-color:#2563eb; }
+      @keyframes voicePulse { 50% { box-shadow:0 0 0 8px rgba(220,38,38,.18); } }
+      .ai-suggestions { display:flex; flex-wrap:wrap; gap:7px; margin-top:10px; }
+      .ai-chip {
+        border:1px solid rgba(255,255,255,.16); background:rgba(255,255,255,.06);
+        color:#cbd5e1; border-radius:999px; padding:6px 9px; font-size:11px; cursor:pointer;
+      }
+      .ai-chip:hover { background:rgba(255,255,255,.12); color:#fff; }
+      .ai-approval {
+        background:#f8fafc; color:#0f172a; border-radius:10px; padding:10px; margin-top:8px;
+        border-left:4px solid #2563eb; font-size:12px;
+      }
+
+      .ai-config {
+        margin-top:10px; padding:9px 10px; border-radius:10px;
+        background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);
+        font-size:11px; color:#cbd5e1;
+      }
+      .ai-config code { color:#fff; }
+      .ai-wake { color:#93c5fd; font-weight:600; }
+
+      @media(max-width:600px){
+        .ai-sidebar { top:auto; bottom:20px; transform:none; }
+        .ai-sidebar-tab { min-height:64px; width:64px; border-radius:16px 0 0 16px; }
+        .ai-sidebar-tab:hover,
+        .ai-sidebar.is-open .ai-sidebar-tab { width:68px; transform:none; }
+        .ai-copilot-panel {
+          right:58px;
+          top:auto;
+          bottom:0;
+          transform:translate(12px,0) scale(.985);
+          width:min(360px, calc(100vw - 82px));
+        }
+        .ai-sidebar:hover .ai-copilot-panel { transform:translate(12px,0) scale(.985); }
+        .ai-sidebar.is-open .ai-copilot-panel {
+          transform:translate(0,0) scale(1);
+        }
+        .ai-input-row { grid-template-columns:1fr auto; }
+        .ai-input-row .send { grid-column:2; grid-row:1; }
+        .ai-input-row input { grid-column:1; grid-row:1; }
+        .ai-input-row #aiVoiceBtn { grid-column:1/-1; }
+      }
+
+      /* ================================
+         STOCK TRANSACTION MATRIX
+         ================================ */
+      .stock-matrix-toolbar {
+        display:flex; gap:10px; align-items:end; flex-wrap:wrap;
+        margin-bottom:16px;
+      }
+      .stock-matrix-toolbar .field { min-width:150px; }
+      .stock-matrix-toolbar label { display:block; font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:6px; }
+      .matrix-card { overflow:hidden; }
+      .matrix-scroll {
+        overflow:auto; border:1px solid var(--border); border-radius:10px;
+        max-height:68vh; background:#fff;
+      }
+      #stockTransactionMatrix {
+        width:max-content; min-width:100%;
+        border-collapse:separate; border-spacing:0;
+        font-size:12px;
+      }
+      #stockTransactionMatrix th,
+      #stockTransactionMatrix td {
+        padding:8px 10px; border-right:1px solid var(--border);
+        border-bottom:1px solid var(--border); white-space:nowrap;
+        height:40px;
+      }
+      #stockTransactionMatrix thead th {
+        position:sticky; top:0; z-index:5;
+        background:#0f172a; color:#fff; text-align:center;
+        font-size:11px;
+      }
+      #stockTransactionMatrix .sticky-sku {
+        position:sticky; left:0; z-index:7; background:#fff;
+        min-width:145px; max-width:170px; font-weight:700;
+      }
+      #stockTransactionMatrix .sticky-desc {
+        position:sticky; left:145px; z-index:7; background:#fff;
+        min-width:330px; max-width:430px; font-weight:600;
+      }
+      #stockTransactionMatrix .sticky-type {
+        position:sticky; left:475px; z-index:7; background:#fff;
+        min-width:190px; max-width:220px;
+      }
+      #stockTransactionMatrix thead .sticky-sku,
+      #stockTransactionMatrix thead .sticky-desc,
+      #stockTransactionMatrix thead .sticky-type {
+        z-index:10; background:#0f172a; color:#fff;
+      }
+      #stockTransactionMatrix tbody tr:hover td { background:#f8fafc; }
+      #stockTransactionMatrix tbody tr:hover .sticky-sku,
+      #stockTransactionMatrix tbody tr:hover .sticky-desc,
+      #stockTransactionMatrix tbody tr:hover .sticky-type { background:#f8fafc; }
+      .matrix-sku-cell { vertical-align:top; }
+      .matrix-desc-cell { vertical-align:top; white-space:normal !important; }
+      .matrix-stock-row td { font-weight:800 !important; background:#f8fafc; }
+      .matrix-stock-row .matrix-qty { background:#f1f5f9; }
+      .matrix-qty {
+        min-width:82px; text-align:right; cursor:pointer;
+        font-weight:600; transition:.15s; user-select:none;
+      }
+      .matrix-qty:hover { background:#eff6ff !important; color:var(--primary); }
+      .matrix-qty.editing { padding:3px; background:#eff6ff !important; }
+      .matrix-qty input {
+        width:76px; padding:7px 6px; border:2px solid var(--primary);
+        border-radius:6px; text-align:right; font-size:12px; font-weight:700;
+        outline:none; background:#fff;
+      }
+      .matrix-empty { text-align:center; color:#94a3b8; padding:30px !important; }
+      .matrix-total td { background:#f1f5f9 !important; font-weight:800; }
+      .matrix-total .sticky-sku, .matrix-total .sticky-type { background:#f1f5f9 !important; }
+      .matrix-positive { color:#0f766e; }
+      .matrix-negative { color:#dc2626; }
+      .matrix-help {
+        background:#eff6ff; border:1px solid #bfdbfe; color:#1e40af;
+        border-radius:10px; padding:10px 12px; font-size:11px; margin-bottom:14px;
+      }
+      .matrix-badge {
+        display:inline-block; padding:3px 7px; border-radius:999px;
+        background:#e2e8f0; color:#334155; font-size:10px; font-weight:700;
+      }
+      @media(max-width:800px){
+        #stockTransactionMatrix .sticky-sku { min-width:170px; max-width:210px; }
+        #stockTransactionMatrix .sticky-type { left:145px; min-width:160px; }
+      }
+
+
+      /* Matrix Qty popup — isolated from generic transaction confirmation */
+      #matrixQtyConfirm {
+        position:fixed !important;
+        inset:0 !important;
+        display:flex !important;
+        align-items:center !important;
+        justify-content:center !important;
+        padding:20px !important;
+        background:rgba(2,6,23,.68) !important;
+        z-index:2147483647 !important;
+        opacity:0;
+        visibility:hidden;
+        pointer-events:none;
+        transition:opacity .18s ease, visibility .18s ease;
+        isolation:isolate;
+        transform:translateZ(0);
+      }
+      #matrixQtyConfirm.is-open {
+        opacity:1 !important;
+        visibility:visible !important;
+        pointer-events:auto !important;
+      }
+      #matrixQtyConfirm {
+        contain:layout style paint;
+      }
+      #matrixQtyConfirm .matrix-confirm-box,
+      #matrixQtyConfirm .matrix-confirm-box * {
+        pointer-events:auto;
+      }
+      #matrixQtyConfirm .matrix-confirm-box {
+        position:relative;
+        z-index:1;
+      }
+      #matrixQtyConfirm .matrix-confirm-box {
+        width:min(430px,94vw);
+        background:#fff;
+        border-radius:16px;
+        box-shadow:0 24px 80px rgba(15,23,42,.28);
+        overflow:hidden;
+        border:1px solid #dbe4ef;
+      }
+      #matrixQtyConfirm .matrix-confirm-head {
+        padding:18px 20px;
+        border-bottom:1px solid #e2e8f0;
+        background:#f8fafc;
+      }
+      #matrixQtyConfirm .matrix-confirm-body {
+        padding:20px;
+        color:#334155;
+        font-size:12px;
+        line-height:1.6;
+      }
+      #matrixQtyConfirm .matrix-confirm-actions {
+        display:flex;
+        justify-content:flex-end;
+        gap:10px;
+        padding:0 20px 18px;
+      }
+
+
+      
+
+      /* ==========================================================
+         GLOBAL WMS DIALOG SYSTEM
+         One consistent popup language for the whole application.
+         ========================================================== */
+      :root {
+        --dialog-blue:#2563eb;
+        --dialog-blue-hover:#1d4ed8;
+        --dialog-red:#ef4444;
+        --dialog-red-hover:#dc2626;
+        --dialog-text:#0f172a;
+        --dialog-muted:#64748b;
+        --dialog-border:#dbe4ef;
+        --dialog-surface:#ffffff;
+        --dialog-soft:#f8fafc;
+      }
+
+      .wms-dialog-shell,
+      #custom-confirm.wms-confirm-overlay,
+      #matrixQtyConfirm.matrix-qty-confirm-overlay {
+        position:fixed !important;
+        inset:0 !important;
+        display:flex !important;
+        align-items:center !important;
+        justify-content:center !important;
+        padding:20px !important;
+        background:rgba(15,23,42,.58) !important;
+        z-index:2147483001 !important;
+        opacity:0;
+        visibility:hidden;
+        pointer-events:none;
+        transition:opacity .16s ease, visibility .16s ease;
+      }
+
+      .wms-dialog-shell.is-open,
+      #custom-confirm.wms-confirm-overlay.is-open,
+      #matrixQtyConfirm.matrix-qty-confirm-overlay.is-open {
+        opacity:1 !important;
+        visibility:visible !important;
+        pointer-events:auto !important;
+      }
+
+      .wms-dialog-card,
+      .wms-confirm-box,
+      #matrixQtyConfirm .matrix-confirm-box {
+        width:min(430px,94vw);
+        max-height:min(84vh,620px);
+        background:var(--dialog-surface);
+        color:var(--dialog-text);
+        border:1px solid var(--dialog-border);
+        border-radius:14px;
+        box-shadow:0 20px 55px rgba(15,23,42,.26);
+        overflow:hidden;
+        transform:translateY(8px) scale(.985);
+        transition:transform .16s ease;
+      }
+
+      .wms-dialog-shell.is-open .wms-dialog-card,
+      #custom-confirm.is-open .wms-confirm-box,
+      #matrixQtyConfirm.is-open .matrix-confirm-box {
+        transform:translateY(0) scale(1);
+      }
+
+      .wms-dialog-head,
+      .wms-confirm-head,
+      #matrixQtyConfirm .matrix-confirm-head {
+        min-height:56px;
+        padding:14px 18px;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:12px;
+        background:var(--dialog-soft);
+        border-bottom:1px solid #e7edf4;
+      }
+
+      .wms-dialog-title,
+      .wms-confirm-title {
+        font-size:14px;
+        font-weight:800;
+        color:var(--dialog-text);
+        line-height:1.25;
+      }
+
+      .wms-dialog-subtitle {
+        margin-top:3px;
+        font-size:10px;
+        color:var(--dialog-muted);
+        line-height:1.4;
+      }
+
+      .wms-dialog-close,
+      .wms-confirm-close {
+        width:28px;
+        height:28px;
+        border:0;
+        background:transparent;
+        color:#64748b;
+        border-radius:8px;
+        font-size:20px;
+        line-height:1;
+        cursor:pointer;
+      }
+
+      .wms-dialog-close:hover,
+      .wms-confirm-close:hover {
+        background:#eef2f7;
+        color:#0f172a;
+      }
+
+      .wms-dialog-body,
+      .wms-confirm-body,
+      #matrixQtyConfirm .matrix-confirm-body {
+        padding:18px;
+        font-size:12px;
+        line-height:1.6;
+        color:#334155;
+      }
+
+      .wms-dialog-actions,
+      .wms-confirm-actions,
+      #matrixQtyConfirm .matrix-confirm-actions {
+        display:flex;
+        align-items:center;
+        justify-content:flex-end;
+        gap:8px;
+        padding:0 18px 16px;
+      }
+
+      .wms-dialog-btn,
+      .wms-confirm-btn {
+        min-width:80px;
+        height:38px;
+        padding:0 16px;
+        border-radius:8px;
+        font-size:12px;
+        font-weight:800;
+        border:1px solid transparent;
+        cursor:pointer;
+      }
+
+      .wms-dialog-cancel,
+      .wms-confirm-cancel,
+      #matrixQtyConfirm #matrixQtyCancel {
+        color:#fff !important;
+        background:var(--dialog-red) !important;
+        border-color:var(--dialog-red) !important;
+      }
+
+      .wms-dialog-cancel:hover,
+      .wms-confirm-cancel:hover,
+      #matrixQtyConfirm #matrixQtyCancel:hover {
+        background:var(--dialog-red-hover) !important;
+        border-color:var(--dialog-red-hover) !important;
+      }
+
+      .wms-dialog-ok,
+      .wms-confirm-ok,
+      #matrixQtyConfirm #matrixQtySave {
+        color:#fff !important;
+        background:var(--dialog-blue) !important;
+        border-color:var(--dialog-blue) !important;
+        box-shadow:0 5px 14px rgba(37,99,235,.18);
+      }
+
+      .wms-dialog-ok:hover,
+      .wms-confirm-ok:hover,
+      #matrixQtyConfirm #matrixQtySave:hover {
+        background:var(--dialog-blue-hover) !important;
+        border-color:var(--dialog-blue-hover) !important;
+      }
+
+      /* Matrix detail rows follow the same restrained visual hierarchy. */
+      #matrixQtyConfirm .matrix-confirm-head > div:first-child {
+        color:var(--dialog-text) !important;
+        font-size:16px !important;
+      }
+      #matrixQtyConfirm .matrix-confirm-head > div:nth-child(2),
+      #matrixQtyConfirm .matrix-confirm-head > div small {
+        color:var(--dialog-muted) !important;
+      }
+
+      @media (max-width:600px){
+        .wms-dialog-card,
+        .wms-confirm-box,
+        #matrixQtyConfirm .matrix-confirm-box {
+          width:min(410px,calc(100vw - 28px));
+        }
+      }
+      .wms-dialog-content b { color:#1e3a5f; }
+      .wms-dialog-content br + br { line-height:.55; }
+
+
+      /* Restored custom WMS confirmation dialog */
+      #custom-confirm.wms-confirm-overlay {
+        position:fixed;
+        inset:0;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding:18px;
+        background:rgba(15,23,42,.56);
+        backdrop-filter:blur(2px);
+        -webkit-backdrop-filter:blur(2px);
+        z-index:2147483001;
+        opacity:0;
+        visibility:hidden;
+        pointer-events:none;
+        transition:opacity .16s ease, visibility .16s ease;
+      }
+      #custom-confirm.wms-confirm-overlay.is-open {
+        opacity:1;
+        visibility:visible;
+        pointer-events:auto;
+      }
+      .wms-confirm-box {
+        width:min(450px,94vw);
+        background:#fff;
+        border:1px solid #d9e2ee;
+        border-radius:16px;
+        box-shadow:0 24px 70px rgba(15,23,42,.28);
+        overflow:hidden;
+        transform:translateY(8px) scale(.985);
+        transition:transform .16s ease;
+      }
+      #custom-confirm.is-open .wms-confirm-box {
+        transform:translateY(0) scale(1);
+      }
+      .wms-confirm-head {
+        min-height:58px;
+        padding:12px 16px;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:12px;
+        border-bottom:1px solid #e5eaf1;
+        background:#f8fafc;
+      }
+      .wms-confirm-title {
+        display:flex;
+        align-items:center;
+        gap:10px;
+        color:#0f172a;
+        font-size:14px;
+        font-weight:800;
+      }
+      .wms-confirm-icon {
+        width:30px;
+        height:30px;
+        border-radius:9px;
+        display:grid;
+        place-items:center;
+        background:#eff6ff;
+        color:#2563eb;
+        border:1px solid #bfdbfe;
+      }
+      .wms-confirm-close {
+        width:30px;
+        height:30px;
+        padding:0;
+        border:0;
+        background:transparent;
+        color:#64748b;
+        font-size:22px;
+        line-height:1;
+        border-radius:8px;
+        cursor:pointer;
+      }
+      .wms-confirm-close:hover { background:#eef2f7; color:#0f172a; }
+      .wms-confirm-body {
+        padding:20px 18px;
+        color:#334155;
+        font-size:12px;
+        line-height:1.7;
+      }
+      .wms-confirm-actions {
+        display:flex;
+        justify-content:flex-end;
+        gap:9px;
+        padding:0 18px 18px;
+      }
+      .wms-confirm-btn {
+        min-width:82px;
+        height:38px;
+        padding:0 16px;
+        border-radius:10px;
+        font-size:12px;
+        font-weight:800;
+        cursor:pointer;
+      }
+      .wms-confirm-cancel {
+        color:#334155;
+        background:#f1f5f9;
+        border:1px solid #dbe3ec;
+      }
+      .wms-confirm-cancel:hover { background:#e8eef5; }
+      .wms-confirm-ok {
+        color:#fff;
+        background:#2563eb;
+        border:1px solid #2563eb;
+        box-shadow:0 7px 18px rgba(37,99,235,.20);
+      }
+      .wms-confirm-ok:hover {
+        background:#1d4ed8;
+        border-color:#1d4ed8;
+      }
+
+.matrix-qty-confirm-overlay {
+        position:fixed !important;
+        inset:0 !important;
+        background:rgba(15,23,42,.60) !important;
+        z-index:2147483647 !important;
+        align-items:center;
+        justify-content:center;
+        padding:20px;
+      }
+
+    
+      /* ==========================================================
+         STOCK WARNING MODAL — FINAL
+         Hidden by default; shown only with .is-open.
+         ========================================================== */
+      #stockWarningModal.wms-stock-warning-overlay {
+        position:fixed !important;
+        inset:0 !important;
+        display:flex !important;
+        align-items:center !important;
+        justify-content:center !important;
+        padding:20px !important;
+        background:rgba(15,23,42,.58) !important;
+        z-index:2147483002 !important;
+        opacity:0 !important;
+        visibility:hidden !important;
+        pointer-events:none !important;
+        overflow:auto !important;
+      }
+
+      #stockWarningModal.wms-stock-warning-overlay[hidden] {
+        display:none !important;
+      }
+
+      #stockWarningModal.wms-stock-warning-overlay.is-open {
+        display:flex !important;
+        opacity:1 !important;
+        visibility:visible !important;
+        pointer-events:auto !important;
+      }
+
+      #stockWarningModal .wms-stock-warning-box {
+        width:min(420px,94vw);
+        max-height:min(84vh,620px);
+        background:#fff;
+        border:1px solid #dbe4ef;
+        border-radius:14px;
+        box-shadow:0 22px 64px rgba(15,23,42,.28);
+        overflow:hidden;
+        transform:translateY(8px) scale(.985);
+        transition:transform .16s ease;
+      }
+
+      #stockWarningModal.is-open .wms-stock-warning-box {
+        transform:translateY(0) scale(1);
+      }
+
+      #stockWarningModal .wms-stock-warning-head {
+        min-height:60px;
+        padding:13px 16px;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:12px;
+        background:#f8fafc;
+        border-bottom:1px solid #e7edf4;
+      }
+
+      #stockWarningModal .wms-stock-warning-title {
+        display:flex;
+        align-items:center;
+        gap:11px;
+        min-width:0;
+      }
+
+      #stockWarningModal .wms-stock-warning-icon {
+        width:34px;
+        height:34px;
+        flex:0 0 34px;
+        display:grid;
+        place-items:center;
+        border-radius:10px;
+        background:#fff7ed;
+        color:#f59e0b;
+        border:1px solid #fed7aa;
+        font-size:15px;
+      }
+
+      #stockWarningModal .wms-stock-warning-heading {
+        color:#0f172a;
+        font-size:14px;
+        font-weight:800;
+        line-height:1.2;
+      }
+
+      #stockWarningModal .wms-stock-warning-subtitle {
+        margin-top:3px;
+        color:#64748b;
+        font-size:10px;
+        line-height:1.4;
+      }
+
+      #stockWarningModal .wms-stock-warning-close {
+        width:28px;
+        height:28px;
+        flex:0 0 28px;
+        border:0;
+        border-radius:8px;
+        background:transparent;
+        color:#64748b;
+        font-size:21px;
+        line-height:1;
+        cursor:pointer;
+      }
+
+      #stockWarningModal .wms-stock-warning-close:hover {
+        background:#eef2f7;
+        color:#0f172a;
+      }
+
+      #stockWarningModal .wms-stock-warning-body {
+        padding:18px;
+        color:#334155;
+        font-size:12px;
+        line-height:1.7;
+      }
+
+      #stockWarningModal .stock-summary {
+        padding:12px 13px;
+        border:1px solid #fde68a;
+        border-radius:10px;
+        background:#fffbeb;
+        color:#92400e;
+      }
+
+      #stockWarningModal .wms-stock-warning-actions {
+        display:flex;
+        justify-content:flex-end;
+        padding:0 18px 16px;
+      }
+
+      #stockWarningModal .wms-stock-warning-ok {
+        min-width:78px;
+        height:38px;
+        padding:0 16px;
+        border-radius:8px;
+        border:1px solid #2563eb;
+        background:#2563eb;
+        color:#fff;
+        font-size:12px;
+        font-weight:800;
+        cursor:pointer;
+        box-shadow:0 5px 14px rgba(37,99,235,.18);
+      }
+
+      #stockWarningModal .wms-stock-warning-ok:hover {
+        background:#1d4ed8;
+        border-color:#1d4ed8;
+      }
+
+
+      /* FINAL GLOBAL ALERT MODAL */
+      #wmsAlertModal.wms-alert-overlay {
+        position:fixed !important;
+        inset:0 !important;
+        display:flex !important;
+        align-items:center !important;
+        justify-content:center !important;
+        padding:20px !important;
+        box-sizing:border-box !important;
+        background:rgba(15,23,42,.58) !important;
+        z-index:2147483647 !important;
+        opacity:0 !important;
+        visibility:hidden !important;
+        pointer-events:none !important;
+        overflow:auto !important;
+      }
+      #wmsAlertModal.wms-alert-overlay.is-open {
+        opacity:1 !important;
+        visibility:visible !important;
+        pointer-events:auto !important;
+      }
+      #wmsAlertModal .wms-alert-box {
+        width:min(430px,94vw);
+        background:#fff;
+        border:1px solid #dbe4ef;
+        border-radius:14px;
+        box-shadow:0 20px 55px rgba(15,23,42,.27);
+        overflow:hidden;
+      }
+      #wmsAlertModal .wms-alert-head {
+        min-height:56px;
+        padding:14px 18px;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:12px;
+        background:#f8fafc;
+        border-bottom:1px solid #e7edf4;
+      }
+      #wmsAlertModal .wms-alert-title-wrap {
+        display:flex;
+        align-items:center;
+        gap:11px;
+        min-width:0;
+      }
+      #wmsAlertModal .wms-alert-icon {
+        width:34px;
+        height:34px;
+        flex:0 0 34px;
+        display:grid;
+        place-items:center;
+        border-radius:10px;
+        background:#eff6ff;
+        color:#2563eb;
+        border:1px solid #bfdbfe;
+      }
+      #wmsAlertModal .wms-alert-title {
+        color:#0f172a;
+        font-size:15px;
+        font-weight:800;
+        line-height:1.2;
+      }
+      #wmsAlertModal .wms-alert-subtitle {
+        margin-top:3px;
+        color:#64748b;
+        font-size:10px;
+      }
+      #wmsAlertModal .wms-alert-close {
+        width:28px;
+        height:28px;
+        border:0;
+        border-radius:8px;
+        background:transparent;
+        color:#64748b;
+        font-size:21px;
+        cursor:pointer;
+      }
+      #wmsAlertModal .wms-alert-close:hover { background:#eef2f7; color:#0f172a; }
+      #wmsAlertModal .wms-alert-body {
+        padding:18px;
+        color:#334155;
+        font-size:12px;
+        line-height:1.7;
+      }
+      #wmsAlertModal .wms-alert-actions {
+        display:flex;
+        justify-content:flex-end;
+        padding:0 18px 16px;
+      }
+      #wmsAlertModal .wms-alert-ok {
+        min-width:78px;
+        height:38px;
+        padding:0 16px;
+        border-radius:8px;
+        border:1px solid #2563eb;
+        background:#2563eb;
+        color:#fff;
+        font-size:12px;
+        font-weight:800;
+        cursor:pointer;
+      }
+      #wmsAlertModal .wms-alert-ok:hover {
+        background:#1d4ed8;
+        border-color:#1d4ed8;
+      }
+
+
+      /* FINAL READ-ONLY RULE: Stock On Hand can never enter edit mode */
+      #stockTransactionMatrix td.matrix-qty.matrix-readonly {
+        cursor:default !important;
+        background:#f8fafc !important;
+        color:#475569 !important;
+        font-weight:600;
+      }
+      #stockTransactionMatrix td.matrix-qty.matrix-readonly:hover {
+        outline:none !important;
+        box-shadow:none !important;
+        background:#f8fafc !important;
+      }
+
+      /* ==========================================================
+         MASTER DATA — PROFESSIONAL PREVIEW
+         ========================================================== */
+      #masterPreviewCard {
+        overflow:hidden;
+      }
+      #masterPreviewCard .table-wrapper {
+        border:1px solid #e2e8f0;
+        border-radius:12px;
+        background:#fff;
+        overflow:auto;
+      }
+      #masterPreviewTable {
+        width:100%;
+        min-width:920px;
+        border-collapse:separate;
+        border-spacing:0;
+        font-size:11px;
+      }
+      #masterPreviewTable thead th {
+        padding:11px 12px;
+        background:#f8fafc;
+        color:#334155;
+        font-size:10px;
+        font-weight:800;
+        text-align:left;
+        border-bottom:1px solid #dbe4ef;
+        white-space:nowrap;
+      }
+      #masterPreviewTable tbody td {
+        padding:10px 12px;
+        color:#334155;
+        background:#fff;
+        border-bottom:1px solid #edf2f7;
+        vertical-align:middle;
+      }
+      #masterPreviewTable tbody tr:last-child td {
+        border-bottom:0;
+      }
+      #masterPreviewTable tbody tr:hover td {
+        background:#f8fbff;
+      }
+      #masterPreviewTable th:first-child,
+      #masterPreviewTable td:first-child {
+        width:46px;
+        text-align:center;
+        color:#94a3b8;
+        font-weight:700;
+      }
+      #masterPreviewTable .md-segment {
+        display:inline-flex;
+        align-items:center;
+        min-height:22px;
+        padding:0 8px;
+        border-radius:999px;
+        background:#eff6ff;
+        border:1px solid #bfdbfe;
+        color:#1d4ed8;
+        font-size:9px;
+        font-weight:800;
+      }
+      #masterPreviewTable .md-sku {
+        color:#0f172a;
+        font-weight:800;
+        white-space:nowrap;
+      }
+      #masterPreviewTable .md-uom {
+        display:inline-flex;
+        min-width:34px;
+        justify-content:center;
+        padding:4px 7px;
+        border-radius:6px;
+        background:#f1f5f9;
+        border:1px solid #e2e8f0;
+        color:#475569;
+        font-size:9px;
+        font-weight:800;
+      }
+      #masterPreviewTable .md-weight {
+        text-align:right;
+        white-space:nowrap;
+        font-variant-numeric:tabular-nums;
+        font-weight:700;
+      }
+      #masterPreviewTable .md-actions {
+        display:flex;
+        justify-content:flex-end;
+        gap:6px;
+      }
+      .md-action-btn {
+        width:30px;
+        height:30px;
+        display:inline-grid;
+        place-items:center;
+        padding:0;
+        border-radius:8px;
+        cursor:pointer;
+        font-size:11px;
+      }
+      .md-edit-btn {
+        color:#2563eb;
+        background:#eff6ff;
+        border:1px solid #bfdbfe;
+      }
+      .md-edit-btn:hover {
+        background:#dbeafe;
+      }
+      .md-empty {
+        padding:34px 20px !important;
+        text-align:center !important;
+        color:#94a3b8 !important;
+      }
+
+      /* Token gate for Master Data editing */
+      #masterEditModal {
+        position:fixed !important;
+        inset:0 !important;
+        display:flex !important;
+        align-items:center !important;
+        justify-content:center !important;
+        padding:20px !important;
+        box-sizing:border-box;
+        background:rgba(15,23,42,.58) !important;
+        z-index:2147483646 !important;
+        opacity:0 !important;
+        visibility:hidden !important;
+        pointer-events:none !important;
+      }
+      #masterEditModal.is-open {
+        opacity:1 !important;
+        visibility:visible !important;
+        pointer-events:auto !important;
+      }
+      .master-edit-box {
+        width:min(420px,94vw);
+        background:#fff;
+        border:1px solid #dbe4ef;
+        border-radius:14px;
+        box-shadow:0 20px 58px rgba(15,23,42,.28);
+        overflow:hidden;
+      }
+      .master-edit-head {
+        min-height:56px;
+        padding:14px 18px;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:12px;
+        background:#f8fafc;
+        border-bottom:1px solid #e7edf4;
+      }
+      .master-edit-title {
+        color:#0f172a;
+        font-size:14px;
+        font-weight:800;
+      }
+      .master-edit-subtitle {
+        margin-top:3px;
+        color:#64748b;
+        font-size:10px;
+      }
+      .master-edit-body {
+        padding:18px;
+      }
+      .master-edit-token {
+        width:100%;
+        height:40px;
+        box-sizing:border-box;
+        border:1px solid #cbd5e1;
+        border-radius:8px;
+        padding:0 12px;
+        font-size:13px;
+        color:#0f172a;
+        outline:none;
+      }
+      .master-edit-token:focus {
+        border-color:#2563eb;
+        box-shadow:0 0 0 3px rgba(37,99,235,.12);
+      }
+      .master-edit-actions {
+        display:flex;
+        justify-content:flex-end;
+        gap:8px;
+        padding:0 18px 18px;
+      }
+      .master-edit-actions button {
+        min-width:82px;
+        height:38px;
+        border-radius:8px;
+        padding:0 16px;
+        font-size:12px;
+        font-weight:800;
+        cursor:pointer;
+      }
+      .master-edit-cancel {
+        border:1px solid #dbe3ec;
+        background:#f1f5f9;
+        color:#334155;
+      }
+      .master-edit-ok {
+        border:1px solid #2563eb;
+        background:#2563eb;
+        color:#fff;
+      }
+      .master-edit-ok:hover {
+        background:#1d4ed8;
+      }
+
+
+      #masterPreviewTable .md-status {
+        display:inline-flex;
+        align-items:center;
+        min-height:22px;
+        padding:0 8px;
+        border-radius:999px;
+        font-size:9px;
+        font-weight:800;
+        border:1px solid;
+      }
+      #masterPreviewTable .md-status.active {
+        color:#166534;
+        background:#f0fdf4;
+        border-color:#bbf7d0;
+      }
+      #masterPreviewTable .md-status.inactive {
+        color:#991b1b;
+        background:#fef2f2;
+        border-color:#fecaca;
+      }
+      .md-toggle-btn {
+        width:30px;
+        height:30px;
+        display:inline-grid;
+        place-items:center;
+        border-radius:8px;
+        border:1px solid;
+        cursor:pointer;
+        font-size:11px;
+      }
+      .md-toggle-on {
+        background:#fff7ed;
+        border-color:#fed7aa;
+        color:#ea580c;
+      }
+      .md-toggle-off {
+        background:#eff6ff;
+        border-color:#bfdbfe;
+        color:#2563eb;
+      }
+</style>
+  </head>
+  <body>
+    <!-- Loading overlay intentionally disabled for faster startup. -->
+    <div id="loading" aria-hidden="true" style="display:none !important;"></div>
+    
+        <!-- Dedicated confirmation for Matrix Qty revision -->
+    
+    <!-- Restored custom WMS confirmation dialog -->
+    
+    <!-- Professional stock warning popup -->
+    <div id="stockWarningModal" class="wms-stock-warning-overlay" aria-hidden="true" hidden role="alertdialog" aria-modal="true" style="display:none !important;">
+      <div class="wms-stock-warning-box">
+        <div class="wms-stock-warning-head">
+          <div class="wms-stock-warning-title">
+            <span class="wms-stock-warning-icon"><i class="fas fa-triangle-exclamation"></i></span>
+            <div>
+              <div class="wms-stock-warning-heading">Stok Tidak Cukup</div>
+              <div class="wms-stock-warning-subtitle">Transaksi melebihi stok On-Hand yang tersedia.</div>
+            </div>
+          </div>
+          <button type="button" id="stockWarningClose" class="wms-stock-warning-close" aria-label="Tutup">×</button>
+        </div>
+        <div id="stockWarningMsg" class="wms-stock-warning-body"></div>
+        <div class="wms-stock-warning-actions">
+          <button type="button" id="stockWarningOk" class="wms-stock-warning-ok">OK</button>
+        </div>
+      </div>
+    </div>
+
+
+    <div id="masterEditModal" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="master-edit-box">
+        <div class="master-edit-head">
+          <div>
+            <div class="master-edit-title">Verifikasi Edit Master Data</div>
+            <div class="master-edit-subtitle">Masukkan token untuk membuka mode edit.</div>
+          </div>
+          <button type="button" id="masterEditClose" class="wms-confirm-close" aria-label="Tutup">×</button>
+        </div>
+        <div class="master-edit-body">
+          <input id="masterEditToken" class="master-edit-token"
+                 type="password" inputmode="numeric" autocomplete="off"
+                 placeholder="Masukkan token">
+          <div style="margin-top:8px;font-size:10px;color:#94a3b8;">Akses edit menggunakan token otorisasi.</div>
+        </div>
+        <div class="master-edit-actions">
+          <button type="button" id="masterEditCancel" class="master-edit-cancel">Batal</button>
+          <button type="button" id="masterEditOk" class="master-edit-ok">Lanjut</button>
+        </div>
+      </div>
+    </div>
+
+<div id="custom-confirm" class="wms-confirm-overlay" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="wms-confirm-box" role="document">
+        <div class="wms-confirm-head">
+          <div class="wms-confirm-title">
+            <span class="wms-confirm-icon"><i class="fas fa-shield-alt"></i></span>
+            <span>Konfirmasi Proses</span>
+          </div>
+          <button type="button" id="customConfirmClose" class="wms-confirm-close" aria-label="Tutup">×</button>
+        </div>
+        <div id="customConfirmMsg" class="wms-confirm-body"></div>
+        <div class="wms-confirm-actions">
+          <button type="button" id="customConfirmCancel" class="wms-confirm-btn wms-confirm-cancel">Cancel</button>
+          <button type="button" id="customConfirmOk" class="wms-confirm-btn wms-confirm-ok">OK</button>
+        </div>
+      </div>
+    </div>
+
+<div id="matrixQtyConfirm" class="matrix-qty-confirm-overlay" aria-hidden="true" role="dialog" aria-modal="true" style="display:flex;opacity:0;visibility:hidden;pointer-events:none;">
+      <div class="matrix-confirm-box">
+        <div class="matrix-confirm-head">
+          <div style="font-size:16px;font-weight:800;color:#0f172a;"><i class="fas fa-shield-alt" style="color:#2563eb;margin-right:7px;"></i>Konfirmasi Revisi Qty</div>
+          <div style="font-size:11px;color:#64748b;margin-top:3px;">Perubahan akan langsung disimpan ke database.</div>
+        </div>
+        <div id="matrixQtyConfirmMsg" class="matrix-confirm-body"></div>
+        <div class="matrix-confirm-actions">
+          <button type="button" id="matrixQtyCancel" class="btn-danger" style="padding:10px 18px;min-width:80px;">Batal</button>
+          <button type="button" id="matrixQtySave" class="btn-primary" style="padding:10px 18px;width:auto;min-width:92px;"><i class="fas fa-check"></i> Simpan</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="app-view" class="app-container">
+      <header style="position:relative;z-index:10;">
+        <div class="brand-group">
+          <div class="brand" aria-label="WMS Warehouse Management System">
+            <span class="brand-mark" aria-hidden="true">
+              <svg class="brand-logo-svg" viewBox="0 0 64 64" role="img" aria-label="WMS crane logo">
+                <defs>
+                  <linearGradient id="wmsBlue" x1="10" y1="8" x2="55" y2="58" gradientUnits="userSpaceOnUse">
+                    <stop offset="0" stop-color="#5bb7ff"/>
+                    <stop offset=".45" stop-color="#1677ff"/>
+                    <stop offset="1" stop-color="#0b2a78"/>
+                  </linearGradient>
+                  <linearGradient id="wmsShine" x1="8" y1="8" x2="52" y2="52" gradientUnits="userSpaceOnUse">
+                    <stop offset="0" stop-color="#ffffff" stop-opacity=".34"/>
+                    <stop offset=".55" stop-color="#ffffff" stop-opacity=".04"/>
+                    <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+
+                <!-- premium blue tile -->
+                <rect x="2" y="2" width="60" height="60" rx="17" fill="url(#wmsBlue)"/>
+                <rect x="2.5" y="2.5" width="59" height="59" rx="16.5"
+                      fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1"/>
+                <path d="M8 15 C18 5, 34 4, 47 10 C54 13,57 18,58 23 L58 8 L8 8 Z"
+                      fill="url(#wmsShine)"/>
+
+                <!-- crane boom -->
+                <path d="M12 20 H43" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/>
+                <path d="M38 20 L47 11" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/>
+                <path d="M47 11 H55" fill="none" stroke="#dbeafe" stroke-width="2.4" stroke-linecap="round"/>
+                <path d="M47 12 V25" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/>
+                <path d="M47 25 C47 29,44 31,41 31 C38 31,36 29,36 26"
+                      fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+                <path d="M36 26 C36 30,39 33,43 33 C47 33,50 30,50 26"
+                      fill="none" stroke="#dbeafe" stroke-width="2.2" stroke-linecap="round"/>
+
+                <!-- WMS -->
+                <text x="8.5" y="48" fill="#fff"
+                      font-family="'Samsung Sharp Sans','SamsungOne','Space Grotesk','Inter',Arial,sans-serif"
+                      font-size="18" font-weight="800" letter-spacing="1.2">WMS</text>
+
+                <!-- subtle warehouse floor/grid -->
+                <path d="M9 53 H55 M16 53 V57 M29 53 V57 M42 53 V57"
+                      fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.2"/>
+              </svg>
+            </span>
+            <span class="brand-copy">
+              <span class="brand-subtitle">WAREHOUSE MANAGEMENT SYSTEM</span>
+            </span>
+          </div>
+        </div>
+        <nav class="nav-tabs">
+          <button class="nav-btn active" id="nav-entry" onclick="switchPage('entry')">Transaksi</button>
+          <button class="nav-btn" id="nav-stocktrx" onclick="switchPage('stocktrx')">Stok Transaksi</button>
+          <button class="nav-btn" id="nav-master" onclick="switchPage('master')">Master Data</button>
+        </nav>
+      </header>
+
+      <section id="page-entry" class="page-section active">
+
+        <!-- WMS AI Copilot: compact sidebar launcher + hover/click pop-up -->
+        <aside class="ai-sidebar" id="aiSidebar" aria-label="WMS AI Copilot">
+          <button type="button" class="ai-sidebar-tab" id="aiSidebarTab"
+                  aria-expanded="false" aria-controls="aiCopilotPanel"
+                  title="WMS AI Copilot">
+            <span class="ai-sidebar-icon">🤖</span>
+            <span class="ai-sidebar-label">AI<br>Copilot</span>
+          </button>
+
+          <div class="ai-copilot-panel" id="aiCopilotPanel" aria-hidden="true">
+            <div class="ai-copilot" id="aiCopilot">
+              <div class="ai-head">
+                <div class="ai-title"><span style="font-size:20px;">🤖</span> WMS AI Copilot</div>
+                <div class="ai-panel-actions">
+                  <div class="ai-status"><span class="ai-dot"></span><span id="aiStatus">Siap membantu</span></div>
+                  <button type="button" class="ai-panel-close" id="aiCopilotClose" title="Tutup">×</button>
+                </div>
+              </div>
+
+              <div class="ai-chat" id="aiChat" aria-live="polite">
+                <div class="ai-msg assistant">
+                  <div class="ai-bubble">Halo Pak. Saya WMS AI Copilot. Silakan tanya stok, FIFO, aging, transaksi, atau gunakan tombol 🎙️ untuk berbicara.</div>
+                </div>
+              </div>
+
+              <div class="ai-input-row">
+                <input id="aiInput" type="text" autocomplete="off"
+                  placeholder="Contoh: stok D-2 berapa? atau keluarkan 500 zak D-2">
+                <button type="button" class="ai-btn send" id="aiSendBtn" title="Kirim">➤</button>
+                <button type="button" class="ai-btn" id="aiVoiceBtn" title="Perintah suara">🎙️</button>
+              </div>
+
+              <div class="ai-config">
+                <span class="ai-wake">Halo WMS</span> aktif. Ucapkan <b>“Halo WMS”</b> untuk memulai percakapan.
+                <span id="aiApiState"> | AI API: belum terhubung</span>
+              </div>
+
+              <div class="ai-suggestions">
+                <button type="button" class="ai-chip" data-ai="Stok SKU paling tua sekarang apa?">📦 Stok tertua</button>
+                <button type="button" class="ai-chip" data-ai="Cek kondisi stok hari ini">📊 Cek stok</button>
+                <button type="button" class="ai-chip" data-ai="Rekomendasikan FIFO untuk SKU D-2">🔄 Rekomendasi FIFO</button>
+                <button type="button" class="ai-chip" data-ai="Ada stok yang berisiko habis?">🚨 Risiko stock out</button>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <div class="card">
+          <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+            <div style="font-weight:700; margin-bottom:10px; color:var(--text-muted); font-size:12px;">1. DATA UMUM</div>
+            <div class="form-row">
+              <div><label>Tanggal</label><input type="date" id="date"></div>
+              <div><label>Tipe Transaksi</label>
+                <select id="transType" onchange="handleTransTypeChange()">
+                  <option value="Output Production">Output Production</option>
+                  <option value="Delivery">Delivery (FIFO Otomatis)</option>
+                  <option value="Selling In (DC)">Selling In (DC - FIFO Otomatis)</option>
+                  <option value="Sample">Sample (FIFO Otomatis)</option>
+                  <option value="Promo">Promo (FIFO Otomatis)</option>
+                  <option value="Broken">Broken (FIFO Otomatis)</option>
+                  <option value="Repack Negatif">Repack Negatif</option>
+                  <option value="Repack Positif">Repack Positif</option>
+                  <option value="Adjustment Negatif">Adjustment Negatif (FIFO Otomatis)</option>
+                  <option value="Adjustment Positif">Adjustment Positif</option>
+                  <option value="Transfer Posting Material to Material">Transfer Posting Material to Material</option>
+                </select>
+              </div>
+              <div>
+                <label>Pilih Shift <span style="font-weight:400; color:#94a3b8;">(Optional)</span></label>
+                <select id="shift">
+                  <option value="">Pilih Shift (Optional)</option>
+                  <option value="Shift 1">Shift 1</option>
+                  <option value="Shift 2">Shift 2</option>
+                  <option value="Shift 3">Shift 3</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div style="margin-bottom: 20px;">
+            <div style="font-weight:700; margin-bottom:10px; color:var(--text-muted); font-size:12px;">2. DETAIL BARANG</div>
+            
+            <div id="fifoRecommendationBox" class="fifo-box">
+              <div style="font-weight:700; color:var(--primary); margin-bottom:4px;"><i class="fas fa-lightbulb"></i> Rekomendasi Alokasi Stok (FIFO Terlama)</div>
+              <div id="fifoRecommendationText">Pilih SKU untuk melihat rekomendasi BIN & Lot tertua.</div>
+            </div>
+
+            <div class="form-row">
+              <div><label>Segment</label><select id="segment" onchange="filterSKU()"><option value="">Pilih Segment</option><option value="Retail">Retail</option><option value="Project">Project</option><option value="General">General</option></select></div>
+              <div><label>SKU</label><select id="sku" onchange="autoFillDesc()" disabled><option>Pilih SKU</option></select></div>
+            </div>
+            <div class="form-row"><div style="grid-column: 1/-1;"><label>Deskripsi</label><input type="text" id="desc" readonly style="background:#f1f5f9;"></div></div>
+            <div class="form-row">
+              <div><label>BIN</label><select id="bin"><option value="">Pilih BIN</option><option value="FG-A">FG-A</option><option value="FG-B">FG-B</option><option value="FG-C">FG-C</option><option value="FG-D">FG-D</option><option value="FG-E">FG-E</option><option value="RACK">RACK</option></select></div>
+              <div><label>Lot Number</label><input type="text" id="lot" placeholder="Contoh: A-123"></div>
+            </div>
+            <div class="form-row">
+              <div><label>Qty (Zak)</label><input type="number" id="qty" min="1" placeholder="0"></div>
+              <div><label>Stok On-Hand (Sheet)</label><input type="text" id="stockOnHand" readonly placeholder="-" style="background:#f1f5f9; font-weight:700; color:var(--primary);"></div>
+            </div>
+            <div class="form-row">
+              <div style="grid-column: 1/-1;">
+                <label>Keterangan / Catatan <span style="font-weight:400; color:#94a3b8;">(Optional)</span></label>
+                <input type="text" id="note" placeholder="Isi keterangan / catatan jika diperlukan">
+              </div>
+            </div>
+            <button onclick="addItemToList()" class="btn-add">+ Tambah Item ke Keranjang</button>
+          </div>
+          <div style="font-weight:700; margin-bottom:10px; color:var(--text-muted); font-size:12px;">3. KERANJANG DRAFT</div>
+          <div class="table-wrapper"><table id="transactionTable"><thead><tr><th>Tipe</th><th>SKU</th><th>Desc</th><th>BIN</th><th>Lot</th><th>Qty</th><th>Keterangan</th><th>Aksi</th></tr></thead><tbody><tr id="emptyRow"><td colspan="8" style="text-align:center; color:#999; padding:20px;">Keranjang kosong</td></tr></tbody></table></div>
+          <button id="btnSubmitAll" onclick="submitAll()" class="btn-primary" disabled>Simpan & Proses Transaksi</button>
+        </div>
+        <div class="card" style="border-top: 4px solid var(--success);"><h3>Riwayat Hari Ini</h3><div class="table-wrapper"><table id="todayTable"><thead><tr><th>Jam</th><th>Tipe</th><th>SKU</th><th>Desc</th><th>Qty</th></tr></thead><tbody></tbody></table></div></div>
+      </section>
+
+
+      <section id="page-stocktrx" class="page-section">
+        <div class="card matrix-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+            <div>
+              <h3 style="margin:0 0 4px 0;">Stok Transaksi</h3>
+              <div style="font-size:11px; color:var(--text-muted);">
+                Tampilan matriks transaksi harian. SKU, Material, dan transaksi tetap di kiri, tanggal bergerak ke samping. Klik langsung angka Qty untuk revisi. Retail dan Project dikelompokkan per SKU.
+              </div>
+            </div>
+            <span id="matrixStatus" class="matrix-badge">Belum dimuat</span>
+          </div>
+
+          <div class="stock-matrix-toolbar">
+            <div class="field">
+              <label>Bulan</label>
+              <select id="matrixMonth"></select>
+            </div>
+            <div class="field">
+              <label>Tahun</label>
+              <input type="number" id="matrixYear" min="2020" max="2100">
+            </div>
+            <button type="button" class="btn-primary" id="btnLoadMatrix" onclick="loadStockTransactionMatrix()" style="width:auto; padding:11px 18px;">
+              <i class="fas fa-sync-alt"></i> Tampilkan
+            </button>
+            <div id="matrixAutoSaveBadge" style="display:inline-flex;align-items:center;gap:7px;padding:10px 14px;border-radius:8px;background:#ecfdf5;color:#047857;border:1px solid #a7f3d0;font-size:11px;font-weight:700;">
+              <i class="fas fa-bolt"></i> Revisi otomatis saat dikonfirmasi
+            </div>
+          </div>
+
+          <div class="matrix-help">
+            <b>✎ Cara edit Qty:</b> klik angka Qty → ubah nilai → tekan <b>Enter</b> atau klik di luar.
+            Popup konfirmasi akan muncul. <b>Simpan</b> = langsung masuk database, <b>Batal</b> = kembali ke nilai lama, <b>Esc</b> = batal.
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin:6px 0 8px;font-size:11px;color:var(--text-muted);">
+            <span><b>Matrix Pergerakan Stok</b> — 1 SKU = 1 blok transaksi</span>
+            <span id="matrixEditCount">0 revisi</span>
+          </div>
+
+          <div class="matrix-scroll">
+            <table id="stockTransactionMatrix">
+              <thead id="stockTransactionMatrixHead"></thead>
+              <tbody id="stockTransactionMatrixBody">
+                <tr><td colspan="4" class="matrix-empty">Pilih bulan lalu klik Tampilkan.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="page-master" class="page-section">
+        <div class="card">
+          <div style="font-weight:700; margin-bottom:10px; color:var(--text-muted); font-size:12px;">MASTER DATA BARANG</div>
+          <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:12px; margin-bottom:18px; font-size:12px; color:#1e40af;">
+            Tambahkan item baru ke Master Data agar SKU dapat dipilih pada menu Transaksi.
+          </div>
+
+          <div class="form-row">
+            <div>
+              <label>Segment <span class="required-mark">*</span></label>
+              <select id="masterSegment" required>
+                <option value="">Pilih Segment</option>
+                <option value="Retail">Retail</option>
+                <option value="Project">Project</option>
+                <option value="General">General</option>
+              </select>
+            </div>
+            <div>
+              <label>SKU / Item Code <span class="required-mark">*</span></label>
+              <input type="text" id="masterSku" placeholder="Contoh: 121-701-0007" autocomplete="off" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div style="grid-column:1/-1;">
+              <label>Description <span class="required-mark">*</span></label>
+              <input type="text" id="masterDesc" placeholder="Masukkan deskripsi produk" autocomplete="off" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div>
+              <label>Status Produk <span class="required-mark">*</span></label>
+              <select id="masterStatus" required>
+                <option value="ACTIVE">Active — tampil di Transaksi</option>
+                <option value="INACTIVE">Inactive — tidak tampil di Transaksi</option>
+              </select>
+            </div>
+            <div>
+              <label>UOM <span class="required-mark">*</span></label>
+              <select id="masterUom" required>
+                <option value="">Pilih UOM</option>
+                <option value="ZAK">ZAK</option>
+                <option value="BOX">BOX</option>
+                <option value="PCS">PCS</option>
+                <option value="UNIT">UNIT</option>
+              </select>
+            </div>
+            <div>
+              <label>Weight per Zak (kg) <span class="required-mark">*</span></label>
+              <input type="number" id="masterWeight" min="0.01" step="0.01"
+                     placeholder="Contoh: 40" inputmode="decimal" required>
+            </div>
+          </div>
+
+          <div class="required-note">
+            <span class="required-mark">*</span> Wajib diisi · Data baru ditulis ke kolom <b>A:E</b> pada sheet <b>MasterData</b>.
+          </div>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button data-master-save onclick="addMasterItem()" class="btn-primary" style="width:auto; padding:12px 22px;">
+              <i class="fas fa-plus"></i> Tambah ke Master Data
+            </button>
+            <button onclick="resetMasterForm()" class="btn-add" style="width:auto; padding:12px 22px; background:#64748b;">
+              Reset
+            </button>
+          </div>
+        </div>
+
+        <div class="card" id="masterPreviewCard">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap;">
+            <div>
+              <h3 style="margin:0;">Preview Master Data</h3>
+              <div style="font-size:10px;color:#64748b;margin-top:3px;">
+                Sheet <b>MasterData</b> · A Segment · B SKU · C Description · D UOM · E Weight/Zak · Status dikelola terpisah · API v2
+              </div>
+            </div>
+            <span id="masterCount" style="font-size:11px;font-weight:800;color:#2563eb;background:#eff6ff;border:1px solid #bfdbfe;padding:5px 9px;border-radius:999px;">0 SKU</span>
+          </div>
+          <div class="table-wrapper">
+            <table id="masterPreviewTable">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Segment</th>
+                  <th>SKU / Item Code</th>
+                  <th>Description</th>
+                  <th>UOM</th>
+                  <th>Weight / Zak (kg)</th>
+                  <th>Status</th>
+                  <th style="text-align:right;">Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td colspan="8" class="md-empty">Belum ada data</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+<footer style="text-align: center; margin-top: 30px; margin-bottom: 20px; color: var(--text-muted); font-size: 13px; font-weight: 500;">
+        Powered by Abi Habudin
+      </footer>
+    </div>
+
+    <script>
+
+      // Legacy popup guard removed: Matrix now uses its own isolated controller.
+
+      const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw8aAsqqm8YgyY7lCeXaZeaj-46heZwpqEUuJKt-dd2UuX1p6sRVkvhIvq8UeNFDN7rPA/exec';
+        // Backend khusus Stock Transaction Matrix (terpisah dari WMS Core)
+        const STOCK_MATRIX_URL = 'https://script.google.com/macros/s/AKfycbwoLbVUVTVUYF6rjLwdG713N8hQNcgFJ3zm7kTYyV4aXXhIrbKCgn0KouXYhzakt3UtfA/exec';
+      const MASTERDATA_URL = 'https://script.google.com/macros/s/AKfycbz6jBxJD8KDYbWJtvPBTvj7239TxKO2CU-kSOT8H_OGPNrg1griaWASeR1PuTcHggCgFA/exec'; 
+
+      let masterData = [], transactionItems = [];
+      let cachedReportSummary = null; // Local cache for instant FIFO lookups
+      let stockTransactionMatrixData = { dates: [], rows: [] };
+      let matrixDirtyChanges = {};
+      
+      // ================================================================
+      // AI WISDOM HARIAN
+      // - Tidak memakai daftar pendek yang mengulang setiap 14 hari.
+      // - Coba ambil kalimat orisinal dari AI Server.
+      // - Jika AI tidak tersedia, fallback menghasilkan kombinasi harian
+      //   berbasis tanggal sehingga tidak mengulang cepat.
+      // ================================================================
+      const WISDOM_FALLBACK = {
+        subjects: [
+          'pikiran yang jernih',
+          'kesabaran yang terarah',
+          'disiplin dalam tindakan',
+          'kesederhanaan dalam bekerja',
+          'keberanian untuk menyesuaikan diri',
+          'ketekunan dalam belajar',
+          'ketelitian dalam keputusan',
+          'ketenangan saat menghadapi perubahan',
+          'kemampuan untuk menahan diri',
+          'kebiasaan memperbaiki hal kecil',
+          'keseimbangan antara cepat dan tepat',
+          'kerendahan hati untuk terus belajar',
+          'kejelasan sebelum bertindak',
+          'konsistensi dalam menjalankan proses'
+        ],
+        actions: [
+          'sering lebih berharga daripada tergesa-gesa.',
+          'membantu melihat jalan ketika keadaan berubah.',
+          'membuat langkah sederhana menjadi lebih kuat.',
+          'menjaga hasil besar tetap dimulai dari hal kecil.',
+          'membuat keputusan menjadi lebih ringan dan terukur.',
+          'mengubah kesalahan menjadi bahan untuk bertumbuh.',
+          'menjaga arah ketika banyak hal menarik perhatian.',
+          'membuat seseorang kuat tanpa harus menjadi keras.',
+          'mengajarkan kapan harus maju dan kapan harus menunggu.',
+          'membantu kita bekerja dengan tenang tanpa kehilangan tujuan.',
+          'membuat perubahan menjadi bagian dari perjalanan, bukan hambatan.',
+          'membuka ruang untuk belajar sebelum merasa sudah tahu.'
+        ],
+        endings: [
+          'Yang penting bukan hanya bergerak, tetapi tahu ke mana.',
+          'Langkah kecil yang konsisten sering mengalahkan niat besar yang tidak dijalankan.',
+          'Ketepatan arah memberi nilai pada kecepatan.',
+          'Ketenangan bukan berarti diam; ia berarti bergerak tanpa kehilangan kendali.',
+          'Setiap hari adalah kesempatan untuk merapikan satu hal lagi.',
+          'Belajar dari keadaan membuat keputusan berikutnya lebih matang.',
+          'Hal yang sederhana akan kuat ketika dilakukan dengan disiplin.',
+          'Menahan diri pada saat yang tepat adalah bagian dari kebijaksanaan.',
+          'Perubahan menjadi ringan ketika kita tidak melawan kenyataan.',
+          'Pekerjaan yang rapi dimulai dari perhatian pada detail kecil.'
+        ]
+      };
+
+      function dayNumberForWisdom(dateObj = new Date()) {
+        const y = dateObj.getFullYear();
+        const start = new Date(y, 0, 1);
+        return Math.floor((dateObj - start) / 86400000) + 1;
+      }
+
+      function hashString(str) {
+        let h = 2166136261;
+        for (let i = 0; i < str.length; i++) {
+          h ^= str.charCodeAt(i);
+          h = Math.imul(h, 16777619);
+        }
+        return h >>> 0;
+      }
+
+      function fallbackDailyWisdom(dateKey) {
+        const n = hashString(dateKey);
+        const subject = WISDOM_FALLBACK.subjects[n % WISDOM_FALLBACK.subjects.length];
+        const action = WISDOM_FALLBACK.actions[Math.floor(n / 17) % WISDOM_FALLBACK.actions.length];
+        const ending = WISDOM_FALLBACK.endings[Math.floor(n / 97) % WISDOM_FALLBACK.endings.length];
+
+        return {
+          text: `${capitalizeFirst(subject)} ${action} ${ending}`,
+          author: 'AI Wisdom — terinspirasi filsafat Tiongkok'
+        };
+      }
+
+      function capitalizeFirst(text) {
+        return text ? text.charAt(0).toUpperCase() + text.slice(1) : text;
+      }
+
+      function getLocalDateKey() {
+        const d = new Date();
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+      }
+
+      function renderWisdom(item) {
+        const textEl = document.getElementById('wisdomText');
+        const authorEl = document.getElementById('wisdomAuthor');
+        if (!textEl || !authorEl || !item) return;
+
+        textEl.textContent = '“' + item.text + '”';
+        authorEl.textContent = '— ' + (item.author || 'AI Wisdom');
+      }
+
+      async function loadDailyWisdom() {
+        const dateKey = getLocalDateKey();
+
+        // Fallback langsung tampil supaya loading tidak menunggu API.
+        const fallback = fallbackDailyWisdom(dateKey);
+        renderWisdom(fallback);
+
+        // Pakai cache harian agar 1 hari tidak memanggil AI berulang-ulang.
+        try {
+          const cachedRaw = localStorage.getItem('wms_ai_wisdom_' + dateKey);
+          if (cachedRaw) {
+            const cached = JSON.parse(cachedRaw);
+            if (cached && cached.text) renderWisdom(cached);
+            return;
+          }
+        } catch (e) {}
+
+        // AI Server hanya dipanggil bila tersedia.
+        const aiUrl = (typeof AI_SERVER_URL !== 'undefined') ? AI_SERVER_URL : '';
+        if (!aiUrl) return;
+
+        try {
+          const prompt =
+            `Buat SATU kalimat kebijaksanaan orisinal dalam bahasa Indonesia, ` +
+            `panjang 15-28 kata, terinspirasi nilai filsafat Tiongkok klasik ` +
+            `(misalnya ketenangan, disiplin, keseimbangan, belajar, adaptasi), ` +
+            `tetapi JANGAN mengutip atau mengaku sebagai kutipan tokoh tertentu. ` +
+            `Kalimat harus berbeda dari hari sebelumnya dan tidak menyebut "AI".`;
+
+          const response = await fetch(aiUrl, {
+            method: 'POST',
+            mode: 'cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              action: 'aiChat',
+              message: prompt,
+              history: [],
+              stockSummary: {},
+              masterData: [],
+              systemPrompt:
+                'Anda membuat satu kebijaksanaan orisinal harian. Jangan mengutip tokoh nyata. ' +
+                'Jawab hanya kalimat kebijaksanaan tanpa tanda kutip dan tanpa penjelasan.'
+            })
+          });
+
+          if (!response.ok) return;
+
+          const data = await response.json();
+          const aiText =
+            data?.reply ||
+            data?.message ||
+            data?.text ||
+            data?.output ||
+            '';
+
+          if (typeof aiText !== 'string' || !aiText.trim()) return;
+
+          const clean = aiText
+            .replace(/^["“”]+|["“”]+$/g, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+
+          if (!clean) return;
+
+          const item = {
+            text: clean,
+            author: 'AI Wisdom — terinspirasi filsafat Tiongkok'
+          };
+
+          localStorage.setItem(
+            'wms_ai_wisdom_' + dateKey,
+            JSON.stringify(item)
+          );
+
+          renderWisdom(item);
+
+        } catch (e) {
+          // Fallback sudah tampil; jangan ganggu loading WMS.
+          console.info('AI Wisdom fallback:', e);
+        }
+      }
+
+      // Daily wisdom request disabled to keep WMS startup lean and responsive.
+
+      function showAlert(title, message) {
+        let overlay = document.getElementById('wmsAlertModal');
+        if (!overlay) {
+          overlay = document.createElement('div');
+          overlay.id = 'wmsAlertModal';
+          overlay.className = 'wms-alert-overlay';
+          overlay.setAttribute('role', 'alertdialog');
+          overlay.setAttribute('aria-modal', 'true');
+          overlay.setAttribute('aria-hidden', 'true');
+          overlay.innerHTML = `
+            <div class="wms-alert-box">
+              <div class="wms-alert-head">
+                <div class="wms-alert-title-wrap">
+                  <span class="wms-alert-icon"><i class="fas fa-circle-info"></i></span>
+                  <div>
+                    <div id="wmsAlertTitle" class="wms-alert-title"></div>
+                    <div class="wms-alert-subtitle">Periksa informasi berikut sebelum melanjutkan.</div>
+                  </div>
+                </div>
+                <button type="button" id="wmsAlertClose" class="wms-alert-close" aria-label="Tutup">×</button>
+              </div>
+              <div id="wmsAlertBody" class="wms-alert-body"></div>
+              <div class="wms-alert-actions">
+                <button type="button" id="wmsAlertOk" class="wms-alert-ok">OK</button>
+              </div>
+            </div>`;
+          document.body.appendChild(overlay);
+        }
+
+        const titleEl = document.getElementById('wmsAlertTitle');
+        const bodyEl = document.getElementById('wmsAlertBody');
+        const okBtn = document.getElementById('wmsAlertOk');
+        const closeBtn = document.getElementById('wmsAlertClose');
+
+        titleEl.textContent = title || 'Perhatian';
+        bodyEl.innerHTML = String(message || '');
+
+        let closed = false;
+        const closeDialog = () => {
+          if (closed) return;
+          closed = true;
+          overlay.classList.remove('is-open');
+          overlay.setAttribute('aria-hidden', 'true');
+          okBtn.onclick = null;
+          closeBtn.onclick = null;
+          overlay.onclick = null;
+          document.removeEventListener('keydown', escHandler, true);
+        };
+        const escHandler = (e) => {
+          if (e.key === 'Escape') {
+            e.preventDefault();
+            closeDialog();
+          }
+        };
+
+        overlay.classList.add('is-open');
+        overlay.setAttribute('aria-hidden', 'false');
+        okBtn.onclick = closeDialog;
+        closeBtn.onclick = closeDialog;
+        overlay.onclick = (e) => {
+          if (e.target === overlay) closeDialog();
+        };
+        document.addEventListener('keydown', escHandler, true);
+        setTimeout(() => { if (!closed) okBtn.focus(); }, 30);
+      }
+
+
+      function showStockWarning(message) {
+        showAlert('Stok Tidak Cukup', message);
+      }
+
+
+      function showConfirm(message, callback) {
+        const overlay = document.getElementById('custom-confirm');
+        const msg = document.getElementById('customConfirmMsg');
+        const ok = document.getElementById('customConfirmOk');
+        const cancel = document.getElementById('customConfirmCancel');
+        const close = document.getElementById('customConfirmClose');
+
+        if (!overlay || !msg || !ok || !cancel) {
+          console.error('Custom confirmation dialog is missing.');
+          return;
+        }
+
+        let closed = false;
+
+        const closeDialog = () => {
+          if (closed) return;
+          closed = true;
+          overlay.classList.remove('is-open');
+          overlay.setAttribute('aria-hidden', 'true');
+          ok.onclick = null;
+          cancel.onclick = null;
+          if (close) close.onclick = null;
+          overlay.onclick = null;
+          document.removeEventListener('keydown', escHandler, true);
+        };
+
+        const escHandler = (e) => {
+          if (e.key === 'Escape') {
+            e.preventDefault();
+            closeDialog();
+          }
+        };
+
+        msg.innerHTML = `<div class="wms-dialog-content">${String(message || '')}</div>`;
+        overlay.classList.add('is-open');
+        overlay.setAttribute('aria-hidden', 'false');
+
+        ok.onclick = async () => {
+          if (closed) return;
+          closed = true;
+          overlay.classList.remove('is-open');
+          overlay.setAttribute('aria-hidden', 'true');
+          ok.onclick = null;
+          cancel.onclick = null;
+          if (close) close.onclick = null;
+          overlay.onclick = null;
+          document.removeEventListener('keydown', escHandler, true);
+
+          if (typeof callback === 'function') {
+            try {
+              await callback();
+            } catch (err) {
+              console.error('Confirmation callback error:', err);
+              showAlert('Gagal', 'Proses tidak dapat dilanjutkan.');
+            }
+          }
+        };
+
+        cancel.onclick = closeDialog;
+        if (close) close.onclick = closeDialog;
+        overlay.onclick = (e) => {
+          if (e.target === overlay) closeDialog();
+        };
+        document.addEventListener('keydown', escHandler, true);
+
+        setTimeout(() => {
+          if (!closed) ok.focus();
+        }, 30);
+      }
+
+      async function apiCall(action, payload = null) {
+        const url = `${SCRIPT_URL}?action=${action}`;
+        try {
+          let options = { method: 'GET', mode: 'cors' };
+          if (payload) {
+            options = {
+              method: 'POST',
+              mode: 'cors',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify(payload)
+            };
+          }
+          const response = await fetch(url, options);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return await response.json();
+        } catch (error) {
+          console.warn("API Fetch warning/error, falling back to mock response:", error);
+          return mockResponse(action);
+        }
+      }
+
+      async function stockMatrixApiCall(action, payload = null, queryParams = null) {
+        // POST + query action sengaja dikirim sekaligus.
+        // Ini membuat Apps Script selalu menerima e.parameter.action,
+        // sementara body tetap membawa payload lengkap.
+        const params = Object.assign({}, queryParams || {}, { action: action });
+        const qs = new URLSearchParams(params).toString();
+        const url = STOCK_MATRIX_URL + '?' + qs;
+        const body = Object.assign({}, payload || {}, queryParams || {}, { action: action });
+
+        try {
+          const response = await fetch(url, {
+            method: 'POST',
+            mode: 'cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(body)
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          return await response.json();
+
+        } catch (error) {
+          console.error('Stock Matrix API error:', error);
+          throw error;
+        }
+      }
+
+      async function masterDataApiCall(action, payload = null, method = 'POST') {
+        const url = `${MASTERDATA_URL}?action=${encodeURIComponent(action)}`;
+
+        const options = {
+          method,
+          mode: 'cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+        };
+
+        if (method === 'POST') {
+          options.body = JSON.stringify(
+            Object.assign({}, payload || {}, { action })
+          );
+        }
+
+        const response = await fetch(url, options);
+
+        if (!response.ok) {
+          throw new Error(`MasterData API HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data === null || data === undefined) {
+          throw new Error('Respons MasterData kosong.');
+        }
+
+        return data;
+      }
+
+      window.onload = async function() {
+        showLoading(true);
+
+        const d = new Date();
+        const isoDate = d.toISOString().split('T')[0];
+        if(document.getElementById('date')) document.getElementById('date').value = isoDate;
+        if(document.getElementById('monMonth')) document.getElementById('monMonth').value = d.getMonth();
+        if(document.getElementById('monYear')) document.getElementById('monYear').value = d.getFullYear();
+
+        // Muat Master Data dan Riwayat secara paralel agar lebih cepat.
+        await Promise.all([
+          loadMasterData(),
+          loadTodayRecords()
+        ]);
+
+        showLoading(false);
+        switchPage('entry');
+        handleTransTypeChange();
+        initStockTransactionMatrix();
+
+        // Ambil stok di background. Tidak menahan tampilan aplikasi.
+        const today = new Date().toISOString().split('T')[0];
+        apiCall(`getReportData&date=${today}`).then(res => {
+          if(res && res.summary) cachedReportSummary = res.summary;
+        }).catch(err => console.log('Background stock preload:', err));
+      };
+
+      function switchPage(p) {
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active')); 
+        const btn = document.getElementById('nav-' + p); 
+        if(btn) btn.classList.add('active');
+        
+        document.querySelectorAll('.page-section').forEach(s => {
+          s.classList.remove('active'); 
+          s.style.display = 'none';
+        });
+        
+        const target = document.getElementById('page-' + p); 
+        if(target) { 
+          target.classList.add('active'); 
+          target.style.display = 'block'; 
+        }
+        
+        if(p === 'entry') loadTodayRecords();
+        if(p === 'stocktrx') initStockTransactionMatrix();
+        if(p === 'master') renderMasterPreview();
+      }
+
+      function showLoading(x) { 
+        document.getElementById('loading').style.display = x ? 'flex' : 'none'; 
+      }
+
+      async function handleTransTypeChange() {
+        const type = document.getElementById('transType').value.toLowerCase();
+        const fifoBox = document.getElementById('fifoRecommendationBox');
+
+        const isOutbound = type.includes('delivery') || 
+                           type.includes('selling') || 
+                           type.includes('sample') || 
+                           type.includes('promo') || 
+                           type.includes('broken') || 
+                           type.includes('negatif');
+
+        if (isOutbound) {
+          fifoBox.classList.add('active');
+        } else {
+          fifoBox.classList.remove('active');
+        }
+
+        // Refresh daftar SKU berdasarkan tipe transaksi.
+        // Untuk transaksi pengurang stok, SKU dengan stok 0 disembunyikan.
+        const segment = document.getElementById('segment').value;
+        if (segment) {
+          await filterSKU();
+        } else {
+          document.getElementById('sku').innerHTML = '<option value="">Pilih SKU</option>';
+          document.getElementById('sku').disabled = true;
+        }
+      }
+
+      function normalizeMasterDataRecord(m) {
+        if (!m) return null;
+        return {
+          rowNumber: m.rowNumber ?? m.row ?? null,
+          status: String(m.status ?? m.Status ?? 'ACTIVE').toUpperCase() === 'INACTIVE' ? 'INACTIVE' : 'ACTIVE',
+          segment: m.segment ?? m.Segment ?? m[0] ?? '',
+          sku: m.sku ?? m.SKU ?? m.itemCode ?? m['Item Code'] ?? m[1] ?? '',
+          desc: m.desc ?? m.description ?? m.Description ?? m[2] ?? '',
+          description: m.description ?? m.desc ?? m.Description ?? m[2] ?? '',
+          uom: m.uom ?? m.UOM ?? m[3] ?? '',
+          weight: m.weight ?? m.weightPerZak ?? m['Weight per Zak'] ?? m[4] ?? ''
+        };
+      }
+
+      async function loadMasterData() {
+        try {
+          const d = await masterDataApiCall('getMasterData', null, 'GET');
+          const list = Array.isArray(d) ? d : (Array.isArray(d.data) ? d.data : null);
+          if (!list) throw new Error(d?.message || 'Format MasterData tidak valid.');
+          masterData = list.map(normalizeMasterDataRecord).filter(Boolean);
+        } catch (error) {
+          console.error('Gagal memuat MasterData:', error);
+          masterData = [];
+          showAlert('Master Data Tidak Terhubung',
+            'Backend Master Data belum dapat diakses. Pastikan Web App sudah di-deploy dan aksesnya <b>Anyone</b>.');
+        }
+      }
+      
+
+      function initStockTransactionMatrix() {
+        const monthEl = document.getElementById('matrixMonth');
+        const yearEl = document.getElementById('matrixYear');
+        if (!monthEl || !yearEl) return;
+
+        if (!monthEl.options.length) {
+          const names = [
+            'Januari','Februari','Maret','April','Mei','Juni',
+            'Juli','Agustus','September','Oktober','November','Desember'
+          ];
+          monthEl.innerHTML = names.map((n,i) => `<option value="${i}">${n}</option>`).join('');
+        }
+
+        const d = new Date();
+        monthEl.value = String(d.getMonth());
+        yearEl.value = d.getFullYear();
+
+        // Selalu tampilkan struktur matrix saat menu dibuka, lalu otomatis
+        // mengambil data bulan berjalan. Tombol Tampilkan tetap tersedia untuk
+        // mengganti bulan/tahun dan refresh data.
+        renderMatrixSkeleton();
+        if (!stockTransactionMatrixData.rows.length || stockTransactionMatrixData.loadedMonth !== `${yearEl.value}-${String(Number(monthEl.value)+1).padStart(2,'0')}`) {
+          loadStockTransactionMatrix();
+        }
+      }
+
+      function daysInMonth(year, monthIndex) {
+        return new Date(year, monthIndex + 1, 0).getDate();
+      }
+
+      function formatMatrixQty(value) {
+        const n = Number(value);
+        if (!Number.isFinite(n) || n === 0) return '0';
+        return n.toLocaleString('id-ID', { maximumFractionDigits: 2 });
+      }
+
+      function isMatrixReadOnlyTransaction(row) {
+        const candidates = [
+          row?.transType, row?.transactionType, row?.type,
+          row?.transaction, row?.transaksi, row?.movementType,
+          row?.description, row?.label
+        ];
+        return candidates.some(v => {
+          const s = String(v ?? '').trim().toLowerCase().replace(/[_-]+/g, ' ');
+          return s === 'stock on hand' ||
+                 s === 'stok on hand' ||
+                 s === 'on hand' ||
+                 s.includes('stock on hand') ||
+                 s.includes('stok on hand');
+        });
+      }
+
+      function matrixCellKey(rowIndex, date) {
+        return `${rowIndex}__${date}`;
+      }
+
+      // Safe formatter for Matrix confirmation popup.
+      // Accepts YYYY-MM-DD / YYYY/MM/DD / DD-MM-YYYY style strings and
+      // falls back to the raw value when parsing is not possible.
+      function formatMatrixDate(dateValue) {
+        const raw = String(dateValue ?? '').trim();
+        if (!raw) return '-';
+
+        const iso = raw.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})$/);
+        if (iso) {
+          const y = Number(iso[1]);
+          const m = Number(iso[2]);
+          const d = Number(iso[3]);
+          const dt = new Date(y, m - 1, d);
+          if (!Number.isNaN(dt.getTime())) {
+            return dt.toLocaleDateString('id-ID', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric'
+            });
+          }
+        }
+
+        const dmy = raw.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
+        if (dmy) {
+          const d = Number(dmy[1]);
+          const m = Number(dmy[2]);
+          const y = Number(dmy[3]);
+          const dt = new Date(y, m - 1, d);
+          if (!Number.isNaN(dt.getTime())) {
+            return dt.toLocaleDateString('id-ID', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric'
+            });
+          }
+        }
+
+        return raw;
+      }
+
+      // Safe dirty-count updater. The Matrix editor must never fail after
+      // closing just because an optional counter element is absent.
+      function updateMatrixEditCount() {
+        const el = document.getElementById('matrixEditCount');
+        if (!el) return;
+        const changes = (typeof matrixDirtyChanges === 'object' && matrixDirtyChanges) ? matrixDirtyChanges : {};
+        const count = Object.keys(changes).length;
+        el.textContent = `${count} revisi`;
+      }
+
+      function renderMatrixSkeleton() {
+        const head = document.getElementById('stockTransactionMatrixHead');
+        const body = document.getElementById('stockTransactionMatrixBody');
+        const monthEl = document.getElementById('matrixMonth');
+        const yearEl = document.getElementById('matrixYear');
+        if (!head || !body || !monthEl || !yearEl) return;
+
+        const year = Number(yearEl.value) || new Date().getFullYear();
+        const month = Number(monthEl.value);
+        const days = daysInMonth(year, month);
+        const monthName = new Date(year, month, 1).toLocaleString('en-US', {month:'short'});
+
+        head.innerHTML = '<tr>' +
+          '<th class="sticky-sku">SKU MATERIAL</th>' +
+          '<th class="sticky-desc">MATERIAL DESCRIPTION</th>' +
+          '<th class="sticky-type">TRANSAKSI</th>' +
+          Array.from({length:days}, (_,i) => `<th>${String(i+1).padStart(2,'0')}-${monthName}</th>`).join('') +
+          '<th>TOTAL</th></tr>';
+
+        body.innerHTML = `<tr><td colspan="${days + 4}" class="matrix-empty">
+          <div style="font-size:18px;margin-bottom:6px;">📊</div>
+          <b>Memuat Stock Transaction Matrix...</b><br>
+          <span style="font-size:11px;">${monthName} ${year}</span>
+        </td></tr>`;
+      }
+
+      function renderEmptyStockMatrix(message) {
+        const head = document.getElementById('stockTransactionMatrixHead');
+        const body = document.getElementById('stockTransactionMatrixBody');
+        if (head) {
+          head.innerHTML = '<tr><th class="sticky-sku">SKU MATERIAL</th><th class="sticky-desc">MATERIAL DESCRIPTION</th><th class="sticky-type">TRANSAKSI</th><th>—</th></tr>';
+        }
+        if (body) {
+          const span = (document.querySelectorAll('#stockTransactionMatrixHead th').length || 4);
+          body.innerHTML = `<tr><td colspan="${span}" class="matrix-empty">${message}</td></tr>`;
+        }
+      }
+
+      async function loadStockTransactionMatrix() {
+        const monthEl = document.getElementById('matrixMonth');
+        const yearEl = document.getElementById('matrixYear');
+        const status = document.getElementById('matrixStatus');
+        if (!monthEl || !yearEl) return;
+
+        const month = Number(monthEl.value);
+        const year = Number(yearEl.value);
+        if (!year || year < 2020 || year > 2100) {
+          showAlert('Perhatian', 'Tahun tidak valid.');
+          return;
+        }
+
+        matrixDirtyChanges = {};
+        if (status) status.textContent = 'Memuat...';
+        showLoading(true);
+
+        try {
+          const targetMonth = `${year}-${String(month+1).padStart(2,'0')}`;
+          const res = await stockMatrixApiCall('getTransactionMatrix', null, { month: targetMonth });
+          if (res && res.status === 'success' && Array.isArray(res.rows)) {
+            const count = daysInMonth(year, month);
+            const dates = Array.from({length: count}, (_,i) => `${year}-${String(month+1).padStart(2,'0')}-${String(i+1).padStart(2,'0')}`);
+            stockTransactionMatrixData = { dates: dates, rows: res.rows };
+            renderStockTransactionMatrix();
+            if (status) status.textContent = `${res.rows.length} baris`;
+          } else {
+            stockTransactionMatrixData = { dates: [], rows: [] };
+            renderEmptyStockMatrix(
+              res?.message ||
+              'Data matriks belum tersedia. Pastikan GS Stock Transaction Matrix sudah ter-deploy dan URL sudah benar.'
+            );
+            if (status) status.textContent = 'Backend belum tersedia';
+          }
+        } catch (e) {
+          console.error(e);
+          renderEmptyStockMatrix('Gagal memuat data Stok Transaksi.');
+          if (status) status.textContent = 'Error';
+        } finally {
+          showLoading(false);
+        }
+      }
+
+      function renderStockTransactionMatrix() {
+        const head = document.getElementById('stockTransactionMatrixHead');
+        const body = document.getElementById('stockTransactionMatrixBody');
+        if (!head || !body) return;
+
+        const dates = stockTransactionMatrixData.dates || [];
+        const rows = stockTransactionMatrixData.rows || [];
+
+        if (!dates.length || !rows.length) {
+          renderEmptyStockMatrix('Tidak ada data transaksi untuk periode ini.');
+          return;
+        }
+
+        // Struktur tampilan:
+        // SEGMENT (Retail / Project)
+        //   SKU | MATERIAL DESCRIPTION | TRANSAKSI | 01-Sep | 02-Sep | ... | TOTAL
+        // Satu SKU dibuat sebagai satu blok sehingga revisi Qty mudah dilakukan.
+        const getSegment = (row) => {
+          const sku = String(row.sku || row.material || row.materialCode || '').trim();
+          const direct = String(row.segment || row.segm || '').trim();
+          if (direct) return direct;
+          const master = (masterData || []).find(m =>
+            String(m.sku || m.material || m.materialCode || '').trim().toLowerCase() === sku.toLowerCase()
+          );
+          return String(master?.segment || 'Other').trim() || 'Other';
+        };
+
+        const getSku = row => String(row.sku || row.material || row.materialCode || '').trim();
+        const getDesc = row => String(
+          row.description || row.desc || row.materialDescription || row.material_desc || row.namaMaterial || row.materialName || ''
+        ).trim();
+        const getType = row => String(row.transType || row.type || row.transactionType || row.transaction || '').trim();
+        const getValue = (row, date) => Number(
+          (row.values && row.values[date]) ?? row[date] ?? 0
+        ) || 0;
+
+        // Kelompokkan berdasarkan Segment lalu SKU.
+        const segmentGroups = {};
+        rows.forEach((row, originalIndex) => {
+          const segment = getSegment(row);
+          const sku = getSku(row) || '-';
+          if (!segmentGroups[segment]) segmentGroups[segment] = {};
+          if (!segmentGroups[segment][sku]) {
+            segmentGroups[segment][sku] = {
+              sku,
+              desc: getDesc(row),
+              rows: []
+            };
+          }
+          if (!segmentGroups[segment][sku].desc && getDesc(row)) {
+            segmentGroups[segment][sku].desc = getDesc(row);
+          }
+          segmentGroups[segment][sku].rows.push({ row, originalIndex });
+        });
+
+        const segmentRank = (segment) => {
+          const s = String(segment).toLowerCase();
+          if (s === 'retail') return 1;
+          if (s === 'project') return 2;
+          return 3;
+        };
+
+        const orderedSegments = Object.keys(segmentGroups).sort((a,b) => {
+          const diff = segmentRank(a) - segmentRank(b);
+          return diff || a.localeCompare(b);
+        });
+
+        head.innerHTML = '<tr>' +
+          '<th class="sticky-sku">SKU MATERIAL</th>' +
+          '<th class="sticky-desc">MATERIAL DESCRIPTION</th>' +
+          '<th class="sticky-type">TRANSAKSI</th>' +
+          dates.map((d, i) => {
+            const label = `${String(i+1).padStart(2,'0')}-${new Date(d + 'T00:00:00').toLocaleString('en-US',{month:'short'})}`;
+            return `<th title="${d}">${label}</th>`;
+          }).join('') +
+          '<th>TOTAL</th></tr>';
+
+        let html = '';
+        const grandDayTotals = Object.fromEntries(dates.map(d => [d, 0]));
+
+        orderedSegments.forEach(segment => {
+          const skuGroups = Object.values(segmentGroups[segment]).sort((a,b) => a.sku.localeCompare(b.sku));
+          const colspan = dates.length + 4;
+
+          html += `<tr class="matrix-segment-row">
+            <td colspan="${colspan}" style="position:sticky;left:0;z-index:4;background:#e2e8f0;color:#0f172a;font-weight:800;padding:9px 12px;border-bottom:1px solid var(--border);">
+              <i class="fas fa-layer-group"></i>&nbsp; ${escapeHtml(String(segment).toUpperCase())}
+              <span style="font-size:10px;color:#64748b;margin-left:8px;">${skuGroups.length} SKU</span>
+            </td>
+          </tr>`;
+
+          skuGroups.forEach(group => {
+            const sku = escapeHtml(group.sku);
+            const desc = escapeHtml(group.desc || '-');
+
+            group.rows.sort((a,b) => {
+              const ta = getType(a.row).toLowerCase();
+              const tb = getType(b.row).toLowerCase();
+              const stockRank = t => t.includes('stock on hand') || t.includes('stok on hand') || t === 'on hand' ? 99 : 1;
+              return stockRank(ta) - stockRank(tb) || ta.localeCompare(tb);
+            });
+
+            group.rows.forEach((obj, idx) => {
+              const row = obj.row;
+              const originalIndex = obj.originalIndex;
+              const typeRaw = getType(row) || '-';
+              const typeLower = typeRaw.toLowerCase();
+              const isStock = typeLower.includes('stock on hand') || typeLower.includes('stok on hand') || typeLower === 'on hand';
+              let rowTotal = 0;
+
+              html += `<tr class="${isStock ? 'matrix-stock-row' : ''}">
+                <td class="sticky-sku matrix-sku-cell" title="${sku}">${idx === 0 ? sku : ''}</td>
+                <td class="sticky-desc matrix-desc-cell" title="${desc}">${idx === 0 ? desc : ''}</td>
+                <td class="sticky-type">${isStock ? '↳ ' : '↳ '}${escapeHtml(typeRaw)}</td>`;
+
+              dates.forEach(date => {
+                const value = getValue(row, date);
+                rowTotal += value;
+                grandDayTotals[date] += value;
+                const cls = value < 0 ? 'matrix-negative' : (value > 0 ? 'matrix-positive' : '');
+                html += `<td class="matrix-qty ${isMatrixReadOnlyTransaction(row) ? "matrix-readonly" : ""} ${cls}" data-row="${originalIndex}" data-date="${date}" data-readonly="${isMatrixReadOnlyTransaction(row) ? "true" : "false"}" title="${isMatrixReadOnlyTransaction(row) ? "Stock On Hand — hanya dapat dilihat" : "Klik untuk revisi Qty"}">${formatMatrixQty(value)}</td>`;
+              });
+
+              html += `<td style="text-align:right;font-weight:800;">${formatMatrixQty(rowTotal)}</td></tr>`;
+            });
+          });
+        });
+
+        const grandTotal = dates.reduce((sum,d) => sum + grandDayTotals[d], 0);
+        html += `<tr class="matrix-total">
+          <td class="sticky-sku">TOTAL</td>
+          <td class="sticky-desc">ALL MATERIAL</td>
+          <td class="sticky-type">RETAIL + PROJECT</td>
+          ${dates.map(d => `<td style="text-align:right;">${formatMatrixQty(grandDayTotals[d])}</td>`).join('')}
+          <td style="text-align:right;">${formatMatrixQty(grandTotal)}</td>
+        </tr>`;
+
+        body.innerHTML = html;
+      }
+
+      // Klik di dalam popup Matrix jangan diteruskan ke popup/handler WMS lain.
+      document.addEventListener('click', function (event) {
+        const modal = document.getElementById('matrixQtyConfirm');
+        if (!modal || modal.hidden) return;
+        if (event.target.closest('#matrixQtyConfirm')) {
+          event.stopPropagation();
+        }
+      }, true);
+
+      // ================================================================
+      // MATRIX QTY EDITOR — CENTRALIZED / ROBUST POPUP
+      // Tidak bergantung pada handler per-cell sehingga popup tetap muncul
+      // walaupun matrix dirender ulang atau ada event handler lain.
+      // ================================================================
+function matrixCellIsReadOnly(cell) {
+        if (!cell) return true;
+        if (cell.dataset.readonly === 'true' || cell.classList.contains('matrix-readonly')) return true;
+
+        const ri = Number(cell.dataset.row);
+        const row = Number.isFinite(ri) && typeof stockTransactionMatrixData !== 'undefined'
+          ? stockTransactionMatrixData.rows?.[ri]
+          : null;
+
+        if (row && typeof isMatrixReadOnlyTransaction === 'function' &&
+            isMatrixReadOnlyTransaction(row)) return true;
+
+        const rowEl = cell.closest('tr');
+        const label = String(
+          rowEl?.querySelector('.matrix-trans-label, .matrix-transaction, .sticky-type, td:nth-child(3)')?.textContent || ''
+        ).trim().toLowerCase().replace(/[_-]+/g, ' ');
+
+        return (
+          label === 'stock on hand' ||
+          label === 'stok on hand' ||
+          label === 'on hand' ||
+          label.includes('stock on hand') ||
+          label.includes('stok on hand')
+        );
+      }
+
+            const matrixQtyEditor = {
+        cell: null,
+        input: null,
+        rowIndex: null,
+        date: null,
+        oldValue: 0,
+        newValue: 0,
+        busy: false,
+
+        get modal() { return document.getElementById('matrixQtyConfirm'); },
+        get msg() { return document.getElementById('matrixQtyConfirmMsg'); },
+        get saveBtn() { return document.getElementById('matrixQtySave'); },
+        get cancelBtn() { return document.getElementById('matrixQtyCancel'); },
+
+        open(cell) {
+          if (!cell || this.busy || cell.classList.contains('editing')) return;
+
+          // STOCK ON HAND = READ ONLY.
+          // Never create an input and never open the Qty confirmation for it.
+          if (matrixCellIsReadOnly(cell)) {
+            cell.classList.add('matrix-readonly');
+            cell.dataset.readonly = 'true';
+            cell.setAttribute('aria-readonly', 'true');
+            cell.title = 'Stock On Hand — hanya dapat dilihat';
+            return;
+          }
+
+          const ri = Number(cell.dataset.row);
+          const date = cell.dataset.date;
+          const row = stockTransactionMatrixData.rows[ri];
+          if (!row || !date) return;
+
+          this.cell = cell;
+          this.input = null;
+          this.rowIndex = ri;
+          this.date = date;
+          this.oldValue = Number((row.values && row.values[date]) ?? row[date] ?? 0) || 0;
+
+          cell.classList.add('editing');
+          const input = document.createElement('input');
+          input.type = 'number';
+          input.step = '0.01';
+          input.min = '-999999999';
+          input.value = this.oldValue;
+          input.autocomplete = 'off';
+          input.setAttribute('aria-label', 'Edit Qty');
+          input.style.cssText =
+            'width:100%;box-sizing:border-box;text-align:right;font-weight:800;' +
+            'border:2px solid #2563eb;border-radius:7px;padding:6px 8px;' +
+            'outline:none;background:#fff;';
+
+          cell.innerHTML = '';
+          cell.appendChild(input);
+          this.input = input;
+
+          // Direct input keyboard handler: one keypress -> one action.
+          input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              e.stopPropagation();
+              e.stopImmediatePropagation();
+              this.confirm();
+            } else if (e.key === 'Escape') {
+              e.preventDefault();
+              e.stopPropagation();
+              e.stopImmediatePropagation();
+              this.cancel();
+            }
+          }, true);
+
+          input.addEventListener('blur', () => {
+            window.setTimeout(() => {
+              if (this.cell === cell && !this.isOpen() && !this.busy) this.confirm();
+            }, 80);
+          });
+
+          input.focus();
+          input.select();
+        },
+
+        isOpen() {
+          const m = this.modal;
+          return !!(m && m.classList.contains('is-open'));
+        },
+
+        confirm() {
+          if (!this.cell || this.busy || this.isOpen()) return;
+
+          let value = Number(this.input?.value);
+          if (!Number.isFinite(value)) value = this.oldValue;
+
+          if (value === this.oldValue) {
+            this.cancel();
+            return;
+          }
+
+          const row = stockTransactionMatrixData.rows[this.rowIndex];
+          if (!row) {
+            this.cancel();
+            return;
+          }
+
+          this.newValue = value;
+
+          if (this.msg) {
+            const safeDate = typeof formatMatrixDate === 'function'
+              ? formatMatrixDate(this.date)
+              : String(this.date ?? '-');
+
+            this.msg.innerHTML =
+              `<div style="display:grid;grid-template-columns:105px 1fr;gap:8px 10px;">` +
+              `<span style="color:#64748b;">SKU</span><b>${escapeHtml(row.sku || row.material || row.materialCode || '')}</b>` +
+              `<span style="color:#64748b;">Material</span><b>${escapeHtml(row.desc || row.description || row.materialDescription || '')}</b>` +
+              `<span style="color:#64748b;">Transaksi</span><b>${escapeHtml(row.transType || row.type || row.transactionType || '')}</b>` +
+              `<span style="color:#64748b;">Tanggal</span><b>${escapeHtml(safeDate)}</b>` +
+              `<span style="color:#64748b;">Qty</span>` +
+              `<b style="font-size:18px;">${formatMatrixQty(this.oldValue)} &rarr; ` +
+              `<span style="color:#2563eb;">${formatMatrixQty(value)}</span></b>` +
+              `</div>` +
+              `<div style="margin-top:15px;padding:11px 12px;border-radius:10px;` +
+              `background:#eff6ff;color:#1e40af;font-weight:700;border:1px solid #bfdbfe;">` +
+              `<i class="fas fa-database"></i> Perubahan ini akan disimpan ke database.</div>`;
+          }
+
+          const modal = this.modal;
+          if (!modal) {
+            showAlert('Error', 'Popup konfirmasi Matrix tidak ditemukan.');
+            this.cancel();
+            return;
+          }
+
+          // Tampilkan popup secara eksplisit. Display tetap flex; visibilitas dikendalikan
+          // oleh opacity/visibility/pointer-events agar tidak bentrok dengan CSS !important.
+          modal.hidden = false;
+          modal.classList.add('is-open');
+          modal.style.setProperty('display', 'flex', 'important');
+          modal.style.opacity = '1';
+          modal.style.visibility = 'visible';
+          modal.style.pointerEvents = 'auto';
+          modal.setAttribute('aria-hidden', 'false');
+
+          // Fokus tombol Simpan agar popup langsung siap digunakan.
+          setTimeout(() => {
+            if (this.saveBtn) this.saveBtn.focus();
+          }, 30);
+        },
+
+        async save() {
+          if (!this.cell || this.busy) return;
+
+          const row = stockTransactionMatrixData.rows[this.rowIndex];
+          if (!row) return;
+
+          const change = {
+            rowIndex: this.rowIndex,
+            date: this.date,
+            sku: row.sku || row.material || row.materialCode || '',
+            desc: row.desc || row.description || row.materialDescription || '',
+            segment: row.segment || '',
+            transType: row.transType || row.type || row.transactionType || '',
+            oldQty: this.oldValue,
+            qty: this.newValue
+          };
+
+          this.busy = true;
+          const btn = this.saveBtn;
+          const original = btn ? btn.innerHTML : '';
+
+          if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+          }
+
+          try {
+            const res = await stockMatrixApiCall('updateTransactionMatrix', {
+              changes: [change],
+              month: document.getElementById('matrixMonth')?.value,
+              year: document.getElementById('matrixYear')?.value
+            });
+
+            if (res && res.status === 'success') {
+              if (!row.values) row.values = {};
+              row.values[this.date] = this.newValue;
+              delete matrixDirtyChanges[matrixCellKey(this.rowIndex, this.date)];
+
+              this.close(false);
+              renderStockTransactionMatrix();
+              updateMatrixEditCount();
+
+              showAlert(
+                'Berhasil',
+                `Qty <b>${escapeHtml(row.sku || '')}</b> berhasil diubah menjadi ` +
+                `<b>${formatMatrixQty(this.newValue)}</b>.`
+              );
+            } else {
+              showAlert('Gagal', res?.message || 'Perubahan Qty belum tersimpan.');
+            }
+          } catch (err) {
+            showAlert('Gagal', err?.message || 'Gagal menyimpan perubahan Qty.');
+          } finally {
+            this.busy = false;
+            if (btn) {
+              btn.disabled = false;
+              btn.innerHTML = original || '<i class="fas fa-check"></i> Simpan';
+            }
+          }
+        },
+
+        cancel() {
+          if (this.busy) return;
+          this.close(true);
+        },
+
+        close(redraw = true) {
+          const modal = this.modal;
+          if (modal) {
+            modal.classList.remove('is-open');
+            modal.hidden = false;
+            modal.style.setProperty('display', 'flex', 'important');
+            modal.style.opacity = '0';
+            modal.style.visibility = 'hidden';
+            modal.style.pointerEvents = 'none';
+            modal.setAttribute('aria-hidden', 'true');
+          }
+
+          if (this.cell) this.cell.classList.remove('editing');
+
+          this.cell = null;
+          this.input = null;
+          this.rowIndex = null;
+          this.date = null;
+          this.oldValue = 0;
+          this.newValue = 0;
+
+          if (redraw) {
+            renderStockTransactionMatrix();
+            updateMatrixEditCount();
+          }
+        }
+      };
+
+      // Satu event delegation global: tombol popup selalu aktif.
+      document.addEventListener('click', function(event) {
+        const modal = document.getElementById('matrixQtyConfirm');
+
+        const save = event.target.closest('#matrixQtySave');
+        const cancel = event.target.closest('#matrixQtyCancel');
+
+        if (save) {
+          event.preventDefault();
+          event.stopPropagation();
+          matrixQtyEditor.save();
+          return;
+        }
+
+        if (cancel) {
+          event.preventDefault();
+          event.stopPropagation();
+          matrixQtyEditor.cancel();
+          return;
+        }
+
+        // Klik backdrop = batal, klik isi popup = tetap terbuka.
+        if (modal && modal.classList.contains('is-open') && event.target === modal) {
+          event.preventDefault();
+          matrixQtyEditor.cancel();
+          return;
+        }
+
+        // Qty Matrix = mulai edit.
+        const cell = event.target.closest('#stockTransactionMatrix td.matrix-qty');
+        if (cell && !event.target.closest('#matrixQtyConfirm')) {
+          if (matrixCellIsReadOnly(cell)) {
+            event.preventDefault();
+            event.stopPropagation();
+            cell.classList.add('matrix-readonly');
+            cell.dataset.readonly = 'true';
+            cell.setAttribute('aria-readonly', 'true');
+            cell.title = 'Stock On Hand — hanya dapat dilihat';
+            return;
+          }
+          event.preventDefault();
+          event.stopPropagation();
+          matrixQtyEditor.open(cell);
+        }
+      }, true);
+
+      // Keyboard guard level WINDOW: dipanggil paling awal pada fase capture,
+      // sebelum handler document/table lain. Ini mencegah Enter tertahan oleh
+      // listener lain di aplikasi.
+      window.addEventListener('keydown', function(event) {
+        const input = event.target && event.target.closest
+          ? event.target.closest('#stockTransactionMatrix td.matrix-qty input')
+          : null;
+        if (!input || matrixQtyEditor.input !== input) return;
+
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          matrixQtyEditor.confirm();
+        } else if (event.key === 'Escape') {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          matrixQtyEditor.cancel();
+        }
+      }, true);
+
+      window.addEventListener('keyup', function(event) {
+        const input = event.target && event.target.closest
+          ? event.target.closest('#stockTransactionMatrix td.matrix-qty input')
+          : null;
+        if (!input || matrixQtyEditor.input !== input) return;
+        if (event.key === 'Enter' && !matrixQtyEditor.isOpen()) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          matrixQtyEditor.confirm();
+        }
+      }, true);
+
+      document.addEventListener('keydown', function(event) {
+        // Hanya tangani Escape saat popup memang sudah terbuka.
+        if (event.key === 'Escape' && matrixQtyEditor.isOpen()) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          matrixQtyEditor.cancel();
+        }
+      }, true);
+
+      // Fallback keyboard global: bila Enter lolos dari handler input, tetap tampilkan popup.
+      document.addEventListener('keyup', function(event) {
+        if (event.key !== 'Enter' || matrixQtyEditor.isOpen()) return;
+        const input = event.target && event.target.closest
+          ? event.target.closest('#stockTransactionMatrix td.matrix-qty input')
+          : null;
+        if (!input || matrixQtyEditor.input !== input) return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        matrixQtyEditor.confirm();
+      }, true);
+
+      function escapeHtml(value) {
+        return String(value ?? '')
+          .replace(/&/g,'&amp;')
+          .replace(/</g,'&lt;')
+          .replace(/>/g,'&gt;')
+          .replace(/"/g,'&quot;')
+          .replace(/'/g,'&#039;');
+      }
+
+      async function loadTodayRecords() { 
+          const d = await apiCall('getTodayRecords');
+          if(d && Array.isArray(d)) {
+              const t = document.querySelector('#todayTable tbody'); 
+              t.innerHTML = ''; 
+              if(d.length === 0) t.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#999;">Belum ada riwayat hari ini</td></tr>';
+              d.forEach(r => t.innerHTML += `<tr><td>${r.time}</td><td>${r.type}</td><td>${r.sku}</td><td>${r.desc}</td><td>${r.qty}</td></tr>`);
+          }
+      }
+
+      async function filterSKU() {
+        const selectedSegment = document.getElementById('segment').value.trim().toLowerCase();
+        const sel = document.getElementById('sku');
+        const transType = document.getElementById('transType').value.toLowerCase();
+
+        sel.innerHTML = '<option value="">Memuat SKU...</option>';
+        sel.disabled = true;
+
+        if(!masterData || masterData.length === 0) {
+          sel.innerHTML = '<option value="">Data Master kosong / gagal dimuat</option>';
+          return;
+        }
+
+        const isStockReducer = transType.includes('delivery') ||
+                               transType.includes('selling') ||
+                               transType.includes('sample') ||
+                               transType.includes('promo') ||
+                               transType.includes('broken') ||
+                               transType.includes('repack negatif') ||
+                               transType.includes('adjustment negatif');
+
+        let filtered = masterData.filter(m =>
+          m.status !== 'INACTIVE' &&
+          m.segment && m.segment.trim().toLowerCase() === selectedSegment
+        );
+
+        // Request stok hanya sekali jika cache belum siap.
+        if (isStockReducer && !cachedReportSummary) {
+          try {
+            const today = new Date().toISOString().split('T')[0];
+            const reportRes = await apiCall(`getReportData&date=${today}`);
+            if(reportRes && Array.isArray(reportRes.summary)) {
+              cachedReportSummary = reportRes.summary;
+            }
+          } catch(e) {
+            console.error('Gagal mengambil stok:', e);
+          }
+        }
+
+        // Transaksi pengurang stok: sembunyikan SKU dengan stok 0.
+        if (isStockReducer) {
+          if(Array.isArray(cachedReportSummary)) {
+            const stockMap = {};
+            cachedReportSummary.forEach(s => {
+              stockMap[String(s.sku).trim()] = Number(s.qty) || 0;
+            });
+
+            filtered = filtered.filter(m =>
+              (stockMap[String(m.sku).trim()] || 0) > 0
+            );
+          } else {
+            filtered = [];
+          }
+        }
+
+        sel.innerHTML = '<option value="">Pilih SKU</option>';
+
+        if(filtered.length === 0) {
+          sel.innerHTML = isStockReducer
+            ? '<option value="">Tidak ada SKU dengan Stok On-Hand > 0</option>'
+            : '<option value="">Tidak ada SKU untuk segment ini</option>';
+          sel.disabled = false;
+          return;
+        }
+
+        const fragment = document.createDocumentFragment();
+        filtered.forEach(m => {
+          let descPendek = (m.desc && m.desc.length > 50)
+            ? m.desc.substring(0, 50) + "..."
+            : m.desc;
+          fragment.appendChild(new Option(m.sku + " | " + descPendek, m.sku));
+        });
+
+        sel.appendChild(fragment);
+        sel.disabled = false;
+      }
+
+      async function autoFillDesc() { 
+        const v = document.getElementById('sku').value;
+        const f = masterData.find(m => m.sku === v); 
+        const stockInput = document.getElementById('stockOnHand');
+        const fifoText = document.getElementById('fifoRecommendationText');
+        
+        if (!f) {
+          document.getElementById('desc').value = "";
+          if (stockInput) stockInput.value = "";
+          fifoText.innerHTML = "Pilih SKU untuk melihat rekomendasi BIN & Lot tertua.";
+          return;
+        }
+
+        document.getElementById('desc').value = f.desc; 
+        stockInput.value = "Memuat...";
+        fifoText.innerHTML = "Memuat rekomendasi FIFO...";
+        
+        const transType = document.getElementById('transType').value.toLowerCase();
+        const isOutbound = transType.includes('delivery') || 
+                           transType.includes('selling') || 
+                           transType.includes('sample') || 
+                           transType.includes('promo') || 
+                           transType.includes('broken') || 
+                           transType.includes('negatif');
+
+        // Use local cache if available to make it instantly responsive without waiting for server network roundtrip
+        if (cachedReportSummary) {
+          const item = cachedReportSummary.find(s => s.sku === v);
+          stockInput.value = item ? item.qty + " Zak" : "0 Zak";
+        }
+
+        // Fetch fresh report data & FIFO recommendation in background
+        const today = new Date().toISOString().split('T')[0];
+        let promises = [apiCall(`getReportData&date=${today}`)];
+        if (isOutbound) {
+          promises.push(apiCall(`getFifoRecommendation&sku=${v}`));
+        }
+
+        try {
+          const results = await Promise.all(promises);
+          const reportRes = results[0];
+          
+          if (reportRes && reportRes.summary) {
+            cachedReportSummary = reportRes.summary;
+            const item = cachedReportSummary.find(s => s.sku === v);
+            stockInput.value = item ? item.qty + " Zak" : "0 Zak";
+          } else {
+            stockInput.value = "0 Zak";
+          }
+
+          if (isOutbound) {
+            const fifoRes = results[1];
+            if (fifoRes && fifoRes.bin && fifoRes.bin !== '-') {
+              fifoText.innerHTML = `Rekomendasi Bin Tertua: <b>${fifoRes.bin}</b> | Lot Tertua: <b>${fifoRes.lot}</b> (Stok Tersedia: ${fifoRes.qty} Zak)`;
+              document.getElementById('bin').value = fifoRes.bin;
+              document.getElementById('lot').value = fifoRes.lot;
+            } else {
+              fifoText.innerHTML = `Data alokasi FIFO otomatis tidak ditemukan atau stok kosong untuk SKU ini.`;
+            }
+          }
+        } catch(e) {
+          console.error(e);
+          stockInput.value = "0 Zak";
+          fifoText.innerHTML = "Gagal memuat data FIFO.";
+        }
+      }
+      
+      async function addItemToList() {
+        const seg = document.getElementById('segment').value;
+        const sku = document.getElementById('sku').value;
+        const lot = document.getElementById('lot').value;
+        const bin = document.getElementById('bin').value;
+        const qty = document.getElementById('qty').value;
+        const type = document.getElementById('transType').value;
+        
+        if(!seg || !sku || !bin || !qty) { 
+          showAlert("Perhatian", "Mohon lengkapi semua data form!"); 
+          return; 
+        }
+
+        const parsedQty = parseFloat(qty);
+        if (parsedQty <= 0) {
+          showAlert("Perhatian", "Quantity harus lebih besar dari 0!");
+          return;
+        }
+
+        const typeLower = type.toLowerCase();
+        const isOutbound = typeLower.includes('delivery') || 
+                           typeLower.includes('selling') || 
+                           typeLower.includes('sample') || 
+                           typeLower.includes('promo') || 
+                           typeLower.includes('broken') || 
+                           typeLower.includes('negatif');
+
+        if (isOutbound) {
+          const today = new Date().toISOString().split('T')[0];
+          const res = cachedReportSummary ? { summary: cachedReportSummary } : await apiCall(`getReportData&date=${today}`);
+          let currentStock = 0;
+          if (res && res.summary) {
+            cachedReportSummary = res.summary;
+            const item = res.summary.find(s => s.sku === sku);
+            currentStock = item ? item.qty : 0;
+          }
+          
+          let qtyInCart = 0;
+          transactionItems.forEach(item => {
+            const itemTypeLower = item.transType.toLowerCase();
+            const itemIsOutbound = itemTypeLower.includes('delivery') || 
+                                   itemTypeLower.includes('selling') || 
+                                   itemTypeLower.includes('sample') || 
+                                   itemTypeLower.includes('promo') || 
+                                   itemTypeLower.includes('broken') || 
+                                   itemTypeLower.includes('negatif');
+                                   
+            if (item.sku === sku && itemIsOutbound) {
+              qtyInCart += item.qty;
+            }
+          });
+
+          const totalRequested = parsedQty + qtyInCart;
+
+          if (currentStock <= 0 || totalRequested > currentStock) {
+            showStockWarning(`Stok On-Hand saat ini: <b>${currentStock} Zak</b>.<br>Total diminta (+ yang di keranjang): <b>${totalRequested} Zak</b>.<br><b>Tidak boleh ada stok on-hand negatif.</b>`);
+            return; 
+          }
+        }
+        
+        transactionItems.push({
+          transType: type,
+          segment: seg, 
+          sku: sku, 
+          desc: document.getElementById('desc').value, 
+          bin: bin, 
+          lot: lot, 
+          qty: parsedQty,
+          note: document.getElementById('note').value.trim(),
+          shift: document.getElementById('shift').value
+        }); 
+        
+        renderTable();
+        document.getElementById('sku').value = ""; 
+        document.getElementById('desc').value = ""; 
+        document.getElementById('lot').value = ""; 
+        document.getElementById('qty').value = ""; 
+        document.getElementById('stockOnHand').value = "";
+      }
+
+      function renderTable() {
+        const tb = document.querySelector('#transactionTable tbody'); 
+        tb.innerHTML = '';
+        
+        if(!transactionItems.length) { 
+          tb.innerHTML = '<tr id="emptyRow"><td colspan="8" style="text-align:center; color:#999; padding:20px;">Keranjang kosong</td></tr>'; 
+          document.getElementById('btnSubmitAll').disabled = true; 
+          return; 
+        }
+        
+        document.getElementById('btnSubmitAll').disabled = false; 
+        document.getElementById('btnSubmitAll').innerText = `Simpan ${transactionItems.length} Item ke Database`;
+        
+        transactionItems.forEach((it, i) => {
+          tb.innerHTML += `<tr><td><span style="background:#e2e8f0; padding:2px 6px; border-radius:4px; font-size:11px; font-weight:bold; color:var(--primary);">${it.transType}</span></td><td>${it.sku}</td><td>${it.desc}</td><td>${it.bin}</td><td>${it.lot}</td><td>${it.qty}</td><td><button onclick="transactionItems.splice(${i},1);renderTable()" class="btn-danger"><i class="fas fa-trash"></i></button></td></tr>`;
+        });
+      }
+
+
+      function buildWhatsAppMessage(items, date, type) {
+        // Gunakan line-break asli. Unicode line separator juga dipakai sebagai
+        // fallback agar tidak tampil sebagai teks literal "\\n" pada gateway WA.
+        const NL = String.fromCharCode(10);
+        const SEP = '────────────────────';
+        const fmtQty = (n) => Number(n || 0).toLocaleString('id-ID');
+        const safeItems = Array.isArray(items) ? items : [];
+
+        const groupedByType = {};
+
+        safeItems.forEach(item => {
+          const transType = String(item.transType || '-').trim();
+          const sku = String(item.sku || '-').trim();
+          const desc = String(item.desc || '-')
+            .replace(/\s+/g, ' ')
+            .trim()
+            .replace(/([_*~`])/g, '');
+
+          const key = `${transType}||${sku}`;
+
+          if (!groupedByType[transType]) {
+            groupedByType[transType] = { items: {}, totalQty: 0 };
+          }
+
+          if (!groupedByType[transType].items[key]) {
+            groupedByType[transType].items[key] = {
+              sku: sku,
+              desc: desc,
+              note: String(item.note || '').trim(),
+              qty: 0
+            };
+          }
+
+          groupedByType[transType].items[key].qty += Number(item.qty) || 0;
+
+          if (item.note) {
+            groupedByType[transType].items[key].note = String(item.note).trim();
+          }
+
+          groupedByType[transType].totalQty += Number(item.qty) || 0;
+        });
+
+        const sections = Object.entries(groupedByType).map(([transType, group]) => {
+          const groupItems = Object.values(group.items);
+
+          const sectionTitle = transType
+            .replace(/\s*\(.*?\)/g, '')
+            .trim()
+            .toUpperCase();
+
+          const lowerType = transType.toLowerCase();
+          const icon = lowerType.includes('delivery') ? '📦'
+                     : lowerType.includes('output production') ? '🏭'
+                     : lowerType.includes('selling') ? '📦'
+                     : lowerType.includes('sample') ? '🧪'
+                     : lowerType.includes('promo') ? '🎯'
+                     : lowerType.includes('broken') ? '⚠️'
+                     : lowerType.includes('repack') ? '🔄'
+                     : '📋';
+
+          const detail = groupItems.map((item, index) => {
+            const noteLine = item.note
+              ? NL + '  ↳ Catatan: ' + item.note
+              : '';
+
+            // Deskripsi italic, Qty bold, dan setiap item benar-benar dipisahkan
+            // dengan line-break agar tampilan WA tidak menempel.
+            return '• _' + item.desc + '_' +
+                   NL + '  Qty: *' + fmtQty(item.qty) + ' ZAK*' +
+                   noteLine;
+          }).join(NL + NL);
+
+          return icon + ' *' + sectionTitle + '*' + NL +
+                 detail + NL + NL +
+                 'Subtotal: ' + groupItems.length + ' SKU | *' +
+                 fmtQty(group.totalQty) + ' ZAK*';
+        }).join(NL + NL + SEP + NL + NL);
+
+        const grandTotal = Object.entries(groupedByType)
+          .map(([transType, group]) =>
+            '• ' + transType.replace(/\s*\(.*?\)/g, '').trim() +
+            ': *' + fmtQty(group.totalQty) + ' ZAK*'
+          )
+          .join(NL);
+
+        const totalSku = Object.values(groupedByType)
+          .reduce((sum, group) => sum + Object.keys(group.items).length, 0);
+
+        const totalQty = safeItems.reduce(
+          (sum, item) => sum + (Number(item.qty) || 0), 0
+        );
+
+        const shifts = [...new Set(
+          safeItems.map(item => item.shift).filter(Boolean)
+        )];
+
+        const headerShift = shifts.length
+          ? shifts.join(' / ').toUpperCase()
+          : '-';
+
+        const displayDate = date
+          ? new Date(date + 'T00:00:00').toLocaleDateString('id-ID', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric'
+            })
+          : date;
+
+        const upperDate = displayDate ? displayDate.toUpperCase() : '-';
+
+        return '🔔 *WH FINISH GOOD | DAILY TRANSACTION*' + NL +
+               SEP + NL +
+               'DATE  : ' + upperDate + NL +
+               'USER  : ADMIN' + NL +
+               'SHIFT : ' + headerShift + NL + NL +
+               sections + NL + NL +
+               SEP + NL +
+               '📊 *DAILY SUMMARY*' + NL +
+               grandTotal + NL +
+               NL +
+               'TOTAL     : *' + fmtQty(totalQty) + ' ZAK*' + NL +
+               'TOTAL SKU : *' + totalSku + '*';
+      }
+
+      async function sendWhatsAppNotification(items, date, type) {
+        try {
+          const message = buildWhatsAppMessage(items, date, type);
+          const res = await apiCall('sendWhatsApp', { message: message });
+          return res;
+        } catch (error) {
+          console.error('Gagal mengirim WhatsApp:', error);
+          return { status: 'error', message: error.message };
+        }
+      }
+
+      function submitAll() {
+        let typeCounts = {};
+        transactionItems.forEach(item => {
+            typeCounts[item.transType] = (typeCounts[item.transType] || 0) + 1;
+        });
+        let summaryText = Object.entries(typeCounts).map(([type, count]) => `<b>${count}x ${type}</b>`).join(', ');
+
+        showConfirm(`Anda yakin ingin memproses transaksi ini ke database spreadsheet?<br><br><span style="font-size:12px; color:#64748b;">Rincian keranjang: ${summaryText}</span>`, async () => {
+            showLoading(true);
+            const payload = { 
+              date: document.getElementById('date').value, 
+              items: transactionItems 
+            };
+            const res = await apiCall('submitData', payload);
+            showLoading(false);
+            if(res && res.status === 'success') {
+                const savedItems = [...transactionItems];
+                const savedDate = document.getElementById('date').value;
+
+                // buildWhatsAppMessage akan mengelompokkan otomatis berdasarkan tipe transaksi.
+                const waRes = await sendWhatsAppNotification(savedItems, savedDate, '');
+
+                if (waRes && (waRes.status === true || waRes.status === 'true' || waRes.status === 'success')) {
+                  showAlert("Berhasil", "Transaksi berhasil disimpan dan laporan WhatsApp berhasil dikirim.");
+                } else {
+                  showAlert("Berhasil", "Transaksi berhasil disimpan ke spreadsheet, tetapi laporan WhatsApp belum berhasil dikirim.");
+                  console.warn("Respons WhatsApp:", waRes);
+                }
+
+                transactionItems = []; 
+                renderTable(); 
+                loadTodayRecords(); 
+                cachedReportSummary = null; // Clear cache so next selection gets fresh stock data
+            } else {
+                showAlert("Gagal", res?.message || "Terjadi kesalahan saat menyimpan data.");
+            }
+        });
+      }
+
+
+      function resetMasterForm() {
+        document.getElementById('masterSku').value = '';
+        document.getElementById('masterDesc').value = '';
+        document.getElementById('masterSegment').value = '';
+        document.getElementById('masterUom').value = '';
+        document.getElementById('masterWeight').value = '';
+        if (document.getElementById('masterStatus')) document.getElementById('masterStatus').value = 'ACTIVE';
+        document.getElementById('masterSku').focus();
+      }
+
+      function renderMasterPreview() {
+        const tbody = document.querySelector('#masterPreviewTable tbody');
+        const countEl = document.getElementById('masterCount');
+        if (!tbody || !countEl) return;
+
+        countEl.innerText = `${masterData.length.toLocaleString('id-ID')} SKU`;
+
+        if (!masterData.length) {
+          tbody.innerHTML = '<tr><td colspan="7" class="md-empty">Belum ada data</td></tr>';
+          return;
+        }
+
+        const preview = masterData
+          .map((m, originalIndex) => ({ ...m, __index: originalIndex }))
+          .sort((a,b) => String(a.sku || '').localeCompare(String(b.sku || '')));
+
+        tbody.innerHTML = preview.map((m, i) => `
+          <tr data-master-index="${m.__index}">
+            <td>${i + 1}</td>
+            <td><span class="md-segment">${escapeHtml(m.segment || '-')}</span></td>
+            <td><span class="md-sku">${escapeHtml(m.sku || '-')}</span></td>
+            <td>${escapeHtml(m.desc || m.description || '-')}</td>
+            <td><span class="md-uom">${escapeHtml(m.uom || m.UOM || '-')}</span></td>
+            <td class="md-weight">${m.weight !== '' && m.weight != null ? Number(m.weight).toLocaleString('id-ID') : '-'}</td>
+            <td><span class="md-status ${m.status === 'INACTIVE' ? 'inactive' : 'active'}">${m.status === 'INACTIVE' ? 'INACTIVE' : 'ACTIVE'}</span></td>
+            <td>
+              <div class="md-actions">
+                <button type="button" class="md-action-btn md-edit-btn"
+                        data-action="edit-master" data-index="${m.__index}"
+                        title="Edit Master Data">
+                  <i class="fas fa-pen"></i>
+                </button>
+                <button type="button" class="md-toggle-btn ${m.status === 'INACTIVE' ? 'md-toggle-off' : 'md-toggle-on'}"
+                        data-action="toggle-master-status" data-index="${m.__index}"
+                        title="${m.status === 'INACTIVE' ? 'Aktifkan SKU' : 'Nonaktifkan SKU'}">
+                  <i class="fas ${m.status === 'INACTIVE' ? 'fa-toggle-off' : 'fa-toggle-on'}"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+
+
+      const MASTER_EDIT_TOKEN = '0';
+      let masterEditIndex = null;
+
+      function closeMasterEditModal() {
+        const modal = document.getElementById('masterEditModal');
+        const token = document.getElementById('masterEditToken');
+        if (modal) {
+          modal.classList.remove('is-open');
+          modal.setAttribute('aria-hidden', 'true');
+        }
+        if (token) token.value = '';
+        masterEditIndex = null;
+      }
+
+      function openMasterEdit(index) {
+        const item = masterData[index];
+        const modal = document.getElementById('masterEditModal');
+        const token = document.getElementById('masterEditToken');
+        if (!item || !modal || !token) return;
+
+        masterEditIndex = index;
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+        setTimeout(() => token.focus(), 30);
+      }
+
+      function authorizeMasterEdit() {
+        const tokenEl = document.getElementById('masterEditToken');
+        if (!tokenEl || masterEditIndex === null) return;
+
+        if (String(tokenEl.value).trim() !== MASTER_EDIT_TOKEN) {
+          playUiSound('error');
+          showAlert('Token Tidak Valid', 'Token edit Master Data tidak sesuai.');
+          tokenEl.select();
+          return;
+        }
+
+        const item = masterData[masterEditIndex];
+        const index = masterEditIndex;
+        closeMasterEditModal();
+
+        document.getElementById('masterSku').value = item.sku || '';
+        document.getElementById('masterDesc').value = item.desc || item.description || '';
+        document.getElementById('masterSegment').value = item.segment || '';
+        document.getElementById('masterUom').value = item.uom || item.UOM || '';
+        document.getElementById('masterWeight').value = item.weight ?? item.weightPerZak ?? '';
+        if (document.getElementById('masterStatus')) document.getElementById('masterStatus').value = item.status === 'INACTIVE' ? 'INACTIVE' : 'ACTIVE';
+
+        const btn = document.querySelector('#page-master button[data-master-save]');
+        if (btn) {
+          btn.dataset.editIndex = String(index);
+          btn.innerHTML = '<i class="fas fa-floppy-disk"></i> Simpan Perubahan';
+          btn.setAttribute('data-master-editing', 'true');
+          btn.onclick = () => saveMasterEdit(index);
+        }
+        document.getElementById('masterSku')?.focus();
+        playUiSound('click');
+      }
+
+      async function saveMasterEdit(index) {
+        const sku = document.getElementById('masterSku').value.trim();
+        const desc = document.getElementById('masterDesc').value.trim();
+        const segment = document.getElementById('masterSegment').value.trim();
+        const uom = document.getElementById('masterUom').value.trim().toUpperCase();
+        const weight = Number(document.getElementById('masterWeight').value);
+        const status = document.getElementById('masterStatus')?.value || 'ACTIVE';
+
+        if (!segment || !sku || !desc || !uom || !Number.isFinite(weight) || weight <= 0) {
+          showAlert('Data Belum Lengkap',
+            'Field wajib diisi: <b>Segment</b>, <b>SKU / Item Code</b>, <b>Description</b>, <b>UOM</b>, dan <b>Weight per Zak</b>.');
+          return;
+        }
+
+        const duplicate = masterData.some((m, i) =>
+          i !== index && String(m.sku || '').trim().toLowerCase() === sku.toLowerCase()
+        );
+        if (duplicate) {
+          showAlert('SKU Duplikat', `SKU <b>${escapeHtml(sku)}</b> sudah digunakan item lain.`);
+          return;
+        }
+
+        showConfirm(
+          `Simpan perubahan Master Data?<br><br>
+           <b>${escapeHtml(sku)}</b><br>
+           ${escapeHtml(desc)}<br>
+           Segment: ${escapeHtml(segment)}<br>
+           UOM: ${escapeHtml(uom)}<br>
+           Weight per Zak: ${weight.toLocaleString('id-ID')} kg`,
+          async () => {
+            showLoading(true);
+            const res = await masterDataApiCall('updateMasterData', {
+              sheetName: 'MasterData',
+              token: MASTER_EDIT_TOKEN,
+              status: status,
+              originalSku: masterData[index]?.sku || '',
+              rowNumber: masterData[index]?.rowNumber || '',
+              rowIndex: index,
+              segment: segment,
+              sku: sku,
+              desc: desc,
+              description: desc,
+              uom: uom,
+              weight: weight,
+              weightPerZak: weight,
+              rowValues: [segment, sku, desc, uom, weight]
+            }, 'POST');
+            showLoading(false);
+
+            if (res && res.status === 'success') {
+              masterData[index] = {
+                ...masterData[index],
+                status,
+                segment, sku, desc, description: desc, uom,
+                weight, weightPerZak: weight
+              };
+              renderMasterPreview();
+              restoreMasterAddMode();
+              showAlert('Berhasil', `Master Data <b>${escapeHtml(sku)}</b> berhasil diperbarui.`);
+              playUiSound('save');
+            } else {
+              showAlert('Gagal', res?.message || 'Gagal memperbarui Master Data.');
+            }
+          }
+        );
+      }
+
+      function restoreMasterAddMode() {
+        const btn = document.querySelector('#page-master button[data-master-save]');
+        if (!btn) return;
+        btn.removeAttribute('data-edit-index');
+        btn.removeAttribute('data-master-editing');
+        btn.innerHTML = '<i class="fas fa-plus"></i> Tambah ke Master Data';
+        btn.onclick = () => addMasterItem();
+        resetMasterForm();
+      }
+
+            async function toggleMasterStatus(index) {
+        const item = masterData[index];
+        if (!item) return;
+
+        const nextStatus = item.status === 'INACTIVE' ? 'ACTIVE' : 'INACTIVE';
+        const verb = nextStatus === 'ACTIVE' ? 'mengaktifkan' : 'menonaktifkan';
+
+        showConfirm(
+          `Yakin ingin <b>${verb}</b> SKU berikut?<br><br>
+           <b>${escapeHtml(item.sku || '')}</b><br>
+           ${escapeHtml(item.desc || item.description || '')}<br><br>
+           Status baru: <b>${nextStatus}</b>`,
+          async () => {
+            showLoading(true);
+            const res = await masterDataApiCall('setMasterDataStatus', {
+              token: MASTER_EDIT_TOKEN,
+              originalSku: item.sku || '',
+              rowNumber: item.rowNumber || '',
+              status: nextStatus
+            }, 'POST');
+            showLoading(false);
+
+            if (res && res.status === 'success') {
+              item.status = nextStatus;
+              renderMasterPreview();
+              await loadMasterData();
+
+              // The transaction dropdown is rebuilt from ACTIVE SKUs only.
+              if (typeof handleSegmentChange === 'function') {
+                await handleSegmentChange();
+              }
+
+              showAlert('Status SKU Diperbarui',
+                `SKU <b>${escapeHtml(item.sku)}</b> sekarang <b>${nextStatus}</b>.`);
+              playUiSound('save');
+            } else {
+              showAlert('Gagal', res?.message || 'Gagal mengubah status SKU.');
+            }
+          }
+        );
+      }
+
+      async function addMasterItem() {
+        const sku = document.getElementById('masterSku').value.trim();
+        const desc = document.getElementById('masterDesc').value.trim();
+        const segment = document.getElementById('masterSegment').value.trim();
+        const uom = document.getElementById('masterUom').value.trim().toUpperCase();
+        const weight = Number(document.getElementById('masterWeight').value);
+
+        if (!segment || !sku || !desc || !uom || !Number.isFinite(weight) || weight <= 0) {
+          showAlert(
+            'Data Belum Lengkap',
+            'Field wajib diisi: <b>Segment</b>, <b>SKU / Item Code</b>, <b>Description</b>, <b>UOM</b>, dan <b>Weight per Zak</b>.'
+          );
+          return;
+        }
+
+        const duplicate = masterData.some(m =>
+          String(m.sku || '').trim().toLowerCase() === sku.toLowerCase()
+        );
+
+        if (duplicate) {
+          showAlert('Data Duplikat', `SKU <b>${sku}</b> sudah ada di Master Data.`);
+          return;
+        }
+
+        showConfirm(
+          `Tambahkan item berikut ke Master Data?<br><br>
+           <b>${escapeHtml(sku)}</b><br>
+           ${escapeHtml(desc)}<br>
+           Segment: ${escapeHtml(segment)}<br>
+           UOM: ${escapeHtml(uom)}<br>
+           Weight per Zak: ${weight.toLocaleString('id-ID')} kg`,
+          async () => {
+            showLoading(true);
+
+            // Exact MasterData column mapping:
+            // A = Segment, B = SKU / Item Code, C = Description,
+            // D = UOM, E = Weight per Zak. F:J stay untouched/blank.
+            const status = document.getElementById('masterStatus')?.value || 'ACTIVE';
+            const res = await masterDataApiCall('addMasterData', {
+              sheetName: 'MasterData',
+              status: status,
+              segment: segment,        // Column A
+              sku: sku,                // Column B
+              desc: desc,              // Column C
+              description: desc,       // Column C (alias)
+              uom: uom,                // Column D
+              weight: weight,          // Column E
+              weightPerZak: weight,    // Column E (alias)
+
+              // Explicit row payload for Apps Script handlers that accept row values.
+              columns: ['A','B','C','D','E'],
+              rowValues: [segment, sku, desc, uom, weight]
+            }, 'POST');
+
+            showLoading(false);
+
+            if (res && res.status === 'success') {
+              masterData.push({
+                status: status,
+                segment: segment,  // A
+                sku: sku,          // B
+                desc: desc,        // C
+                description: desc,
+                uom: uom,          // D
+                weight: weight,    // E
+                weightPerZak: weight
+              });
+              renderMasterPreview();
+              resetMasterForm();
+              playUiSound('save');
+              showAlert('Berhasil', `SKU <b>${escapeHtml(sku)}</b> berhasil ditambahkan ke Master Data.`);
+            } else {
+              showAlert('Gagal', res?.message || 'Gagal menambahkan item ke Master Data.');
+            }
+          }
+        );
+      }
+
+
+
+      /* MASTER EDIT EVENTS */
+      document.addEventListener('click', (event) => {
+        const toggle = event.target.closest('[data-action="toggle-master-status"]');
+        if (toggle) {
+          event.preventDefault();
+          event.stopPropagation();
+          toggleMasterStatus(Number(toggle.dataset.index));
+          return;
+        }
+
+        const btn = event.target.closest('[data-action="edit-master"]');
+        if (!btn) return;
+        event.preventDefault();
+        event.stopPropagation();
+        openMasterEdit(Number(btn.dataset.index));
+      }, true);
+
+      document.getElementById('masterEditOk')?.addEventListener('click', authorizeMasterEdit);
+      document.getElementById('masterEditCancel')?.addEventListener('click', closeMasterEditModal);
+      document.getElementById('masterEditClose')?.addEventListener('click', closeMasterEditModal);
+      document.getElementById('masterEditModal')?.addEventListener('click', (e) => {
+        if (e.target.id === 'masterEditModal') closeMasterEditModal();
+      });
+      document.getElementById('masterEditToken')?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          authorizeMasterEdit();
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          closeMasterEditModal();
+        }
+      });
+
+      /* ================================
+         WMS AI COPILOT ENGINE
+         Voice input uses browser SpeechRecognition.
+         Voice output uses browser SpeechSynthesis.
+         Optional server-side AI can be enabled through AI_API_ACTION.
+         ================================ */
+      const AI_API_ACTION = 'aiChat';
+      // Google Apps Script khusus Halo WMS / OpenAI
+      const AI_SERVER_URL = 'https://script.google.com/macros/s/AKfycbw6z3npRuyuT7PsXA09c12PQzQkVEXQseLUyDqc3kamZFh-mp3YPn6gmNcqmIp0CiJuMw/exec';
+      // The API key MUST stay on the server (Google Apps Script), never in this HTML.
+      // Apps Script should implement action=aiChat and call OpenAI Responses API.
+      const AI_WAKE_PHRASE = 'halo wms';
+      let aiConversation = [];
+      let recognition = null;
+      let isListening = false;
+
+      function aiAddMessage(role, text) {
+        const chat = document.getElementById('aiChat');
+        if (!chat) return;
+        const wrap = document.createElement('div');
+        wrap.className = 'ai-msg ' + (role === 'user' ? 'user' : 'assistant');
+        const bubble = document.createElement('div');
+        bubble.className = 'ai-bubble';
+        bubble.textContent = text;
+        wrap.appendChild(bubble);
+        chat.appendChild(wrap);
+        chat.scrollTop = chat.scrollHeight;
+        aiConversation.push({role, content:text});
+      }
+
+      function aiSpeak(text) {
+        if (!('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel();
+        const clean = String(text).replace(/[🤖📦📊🔄🚨🎙️✓]/g, '');
+        const u = new SpeechSynthesisUtterance(clean);
+        u.lang = 'id-ID';
+        u.rate = 0.96;
+        u.pitch = 1.0;
+        window.speechSynthesis.speak(u);
+      }
+
+      function aiSetStatus(text, busy=false) {
+        const el = document.getElementById('aiStatus');
+        if (el) el.textContent = text;
+        const dot = document.querySelector('.ai-dot');
+        if (dot) dot.style.background = busy ? '#f59e0b' : '#10b981';
+      }
+
+      function normalizeSkuText(text) {
+        const t = String(text || '').toLowerCase();
+        const candidates = (masterData || []).map(x => String(x.sku || ''));
+        let found = candidates.find(s => t.includes(s.toLowerCase()));
+        if (found) return found;
+        // Friendly shorthand: "d-2" / "d2" can match descriptions containing D-2.
+        const compact = t.replace(/[\s_-]/g,'');
+        const m = candidates.find(s => compact.includes(String(s).toLowerCase().replace(/[\s_-]/g,'')));
+        return m || null;
+      }
+
+      async function getFreshStock() {
+        const today = new Date().toISOString().split('T')[0];
+        const res = await apiCall(`getReportData&date=${today}`);
+        if (res && Array.isArray(res.summary)) {
+          cachedReportSummary = res.summary;
+          return res.summary;
+        }
+        return Array.isArray(cachedReportSummary) ? cachedReportSummary : [];
+      }
+
+
+      async function askServerAI(userText) {
+        const state = document.getElementById('aiApiState');
+        const context = {
+          message: String(userText || ''),
+          history: aiConversation.slice(-12),
+          stockSummary: Array.isArray(cachedReportSummary) ? cachedReportSummary.slice(0,300) : [],
+          masterData: Array.isArray(masterData) ? masterData.slice(0,800) : [],
+          system: `Anda adalah WMS Copilot untuk operasional warehouse finished goods.
+Jawab dalam Bahasa Indonesia yang natural, ringkas, profesional, seperti rekan kerja.
+Pahami konteks percakapan. Gunakan data WMS yang diberikan sebagai sumber utama.
+Jangan mengarang stok, BIN, LOT, quantity, atau transaksi.
+Jika data belum tersedia, katakan dengan jelas.
+Anda boleh memberikan rekomendasi, tetapi jangan mengeksekusi transaksi tanpa konfirmasi user.
+Jika user meminta transaksi, buat draft dan minta konfirmasi.`
+        };
+        try {
+          const response = await fetch(AI_SERVER_URL, {
+            method: 'POST',
+            headers: {'Content-Type': 'text/plain;charset=utf-8'},
+            body: JSON.stringify(Object.assign({action: AI_API_ACTION}, context))
+          });
+          const server = await response.json();
+          if (server && server.status === 'success' && server.reply) {
+            if (state) state.textContent = ' | AI API: terhubung';
+            return String(server.reply);
+          }
+          if (state) state.textContent = ' | AI API: belum tersedia';
+        } catch(e) {
+          if (state) state.textContent = ' | AI API: error';
+        }
+        return null;
+      }
+
+      
+      async function testAIConnection() {
+        try {
+          const r = await fetch(AI_SERVER_URL, {method:'GET'});
+          const d = await r.json();
+          if (d && d.status === 'success') {
+            const el = document.getElementById('aiApiState');
+            if (el) el.textContent = ' | AI API: terhubung';
+            return true;
+          }
+        } catch(e) {}
+        const el = document.getElementById('aiApiState');
+        if (el) el.textContent = ' | AI API: belum terhubung';
+        return false;
+      }
+
+async function localAiReasoning(userText) {
+        const q = String(userText || '').trim();
+        const lower = q.toLowerCase();
+        if (!q) return 'Silakan sampaikan pertanyaannya, Pak.';
+
+        const sku = normalizeSkuText(q);
+
+        // Exact SKU stock query
+        if (sku && /(stok|stock|on.?hand|tersedia|jumlah)/i.test(lower)) {
+          aiSetStatus('Memeriksa stok…', true);
+          const summary = await getFreshStock();
+          const item = summary.find(x => String(x.sku).trim() === String(sku).trim());
+          const qty = item ? Number(item.qty || 0) : 0;
+          const desc = item?.desc || masterData.find(x => x.sku === sku)?.desc || sku;
+          aiSetStatus('Siap membantu');
+          return `Stok ${sku} saat ini ${qty.toLocaleString('id-ID')} Zak.\n${desc}`;
+        }
+
+        // FIFO query
+        if ((/fifo|lot tertua|bin tertua|ambil dari mana|keluarkan/i.test(lower)) && sku) {
+          aiSetStatus('Menganalisis FIFO…', true);
+          const res = await apiCall(`getFifoRecommendation&sku=${encodeURIComponent(sku)}`);
+          aiSetStatus('Siap membantu');
+          if (res && res.bin && res.bin !== '-') {
+            return `Untuk ${sku}, saya rekomendasikan BIN ${res.bin}, Lot ${res.lot}, dengan stok tersedia ${Number(res.qty||0).toLocaleString('id-ID')} Zak. Ini mengikuti rekomendasi FIFO stok tertua.`;
+          }
+          return `Saya belum menemukan alokasi FIFO untuk ${sku}. Silakan cek BIN dan Lot pada data stok.`;
+        }
+
+        // Generic stock overview
+        if (/(cek|lihat|kondisi|ringkas|summary).*(stok|stock)|stok.*(hari ini|sekarang)|stock.*(hari ini|sekarang)/i.test(lower)) {
+          aiSetStatus('Menganalisis stok…', true);
+          const summary = await getFreshStock();
+          const positive = summary.filter(x => Number(x.qty || 0) > 0);
+          const total = positive.reduce((s,x)=>s+Number(x.qty||0),0);
+          const oldest = positive.slice().sort((a,b)=>Number(b.maxAge||0)-Number(a.maxAge||0)).slice(0,3);
+          aiSetStatus('Siap membantu');
+          let answer = `Saat ini terdapat ${positive.length.toLocaleString('id-ID')} SKU dengan stok positif, total ${total.toLocaleString('id-ID')} Zak.`;
+          if (oldest.length) {
+            answer += '\nAging tertinggi yang terbaca: ' + oldest.map(x => `${x.sku} (${Number(x.maxAge||0)} hari)`).join(', ') + '.';
+          }
+          return answer;
+        }
+
+        // Stock-out risk based on status/age fields if supplied by report API
+        if (/(stock.?out|habis|risiko|risk|kritis|rawan)/i.test(lower)) {
+          aiSetStatus('Mendeteksi risiko…', true);
+          const summary = await getFreshStock();
+          const risk = summary.filter(x => {
+            const qn = Number(x.qty || 0);
+            const st = String(x.status || '').toLowerCase();
+            return qn <= 0 || /kritis|habis|risk|warning/.test(st);
+          }).slice(0,8);
+          aiSetStatus('Siap membantu');
+          if (!risk.length) return 'Saya belum menemukan SKU yang ditandai berisiko dari data laporan yang tersedia.';
+          return 'Saya menemukan beberapa SKU yang perlu diperhatikan: ' + risk.map(x => `${x.sku} (${Number(x.qty||0).toLocaleString('id-ID')} Zak${x.status ? ', '+x.status : ''})`).join('; ') + '.';
+        }
+
+        // Draft outbound command — never executes automatically.
+        const qtyMatch = lower.match(/(\d+(?:[.,]\d+)?)\s*(zak|pcs|unit)?/i);
+        if (sku && qtyMatch && /(keluar|keluarkan|delivery|sample|promo|jual|ambil)/i.test(lower)) {
+          const qty = Number(qtyMatch[1].replace(/\./g,'').replace(',','.')) || 0;
+          if (qty > 0) {
+            const summary = await getFreshStock();
+            const item = summary.find(x => String(x.sku).trim() === String(sku).trim());
+            const stock = Number(item?.qty || 0);
+            if (qty > stock) {
+              return `Saya tidak membuat transaksi karena ${qty.toLocaleString('id-ID')} Zak melebihi stok ${stock.toLocaleString('id-ID')} Zak.`;
+            }
+            return `Siap. Saya siapkan draft pengeluaran ${qty.toLocaleString('id-ID')} Zak untuk ${sku}. Stok saat ini ${stock.toLocaleString('id-ID')} Zak.\nTransaksi belum disimpan. Konfirmasi melalui form transaksi sebelum eksekusi.`;
+          }
+        }
+
+        // Full ChatGPT-style reasoning comes from the server when configured.
+        const serverReply = await askServerAI(q);
+        if (serverReply) return serverReply;
+
+        return 'Saya memahami perintahnya, tetapi AI server belum terhubung. Untuk sementara saya masih bisa membantu dengan stok, FIFO, aging, risiko stock out, dan draft transaksi.';
+      }
+
+      async function aiAsk(text, speak=true) {
+        const q = String(text || '').trim();
+        if (!q) return;
+        aiAddMessage('user', q);
+        const input = document.getElementById('aiInput');
+        if (input) input.value = '';
+        aiSetStatus('Berpikir…', true);
+        try {
+          const reply = await localAiReasoning(q);
+          aiAddMessage('assistant', reply);
+          aiSetStatus('Siap membantu');
+          if (speak) aiSpeak(reply);
+        } catch(e) {
+          console.error(e);
+          const reply = 'Maaf Pak, saya gagal membaca data WMS saat ini. Silakan coba lagi.';
+          aiAddMessage('assistant', reply);
+          aiSetStatus('Terjadi kendala');
+          if (speak) aiSpeak(reply);
+        }
+      }
+
+
+      let wakeBuffer = '';
+      function handleWakePhrase(transcript) {
+        const t = String(transcript || '').toLowerCase().trim();
+        if (!t) return false;
+        if (t.includes(AI_WAKE_PHRASE)) {
+          const after = t.split(AI_WAKE_PHRASE).slice(1).join(AI_WAKE_PHRASE).trim();
+          if (after) {
+            aiAsk(after, true);
+          } else {
+            aiAddMessage('assistant', 'Ya Pak, saya siap. Silakan bicara.');
+            aiSpeak('Ya Pak, saya siap. Silakan bicara.');
+          }
+          return true;
+        }
+        return false;
+      }
+
+
+      // Centralized UI sound engine.
+      // Sounds are generated with Web Audio API so no external audio files are needed.
+      const WMS_UI_SOUND = (() => {
+        let ctx = null;
+        let unlocked = false;
+        let lastAt = 0;
+
+        function getContext() {
+          if (!ctx) {
+            const AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) return null;
+            try { ctx = new AC(); } catch (_) { return null; }
+          }
+          return ctx;
+        }
+
+        function unlock() {
+          const c = getContext();
+          if (!c) return;
+          unlocked = true;
+          if (c.state === 'suspended') c.resume().catch(() => {});
+        }
+
+        function beep(type = 'success') {
+          const now = performance.now();
+          if (now - lastAt < 90) return;
+          lastAt = now;
+
+          const c = getContext();
+          if (!c || !unlocked) return;
+          if (c.state === 'suspended') {
+            c.resume().catch(() => {});
+            return;
+          }
+
+          const osc = c.createOscillator();
+          const gain = c.createGain();
+          const filter = c.createBiquadFilter();
+
+          osc.type = type === 'error' ? 'square' : 'sine';
+          filter.type = 'lowpass';
+          filter.frequency.value = type === 'save' ? 2200 : 1700;
+          filter.Q.value = 0.4;
+
+          const t = c.currentTime;
+          let f1 = 620, f2 = 820, dur = 0.08;
+          if (type === 'save') { f1 = 720; f2 = 1040; dur = 0.13; }
+          if (type === 'input') { f1 = 480; f2 = 560; dur = 0.055; }
+          if (type === 'click') { f1 = 540; f2 = 650; dur = 0.045; }
+          if (type === 'error') { f1 = 420; f2 = 240; dur = 0.12; }
+
+          osc.frequency.setValueAtTime(f1, t);
+          osc.frequency.exponentialRampToValueAtTime(Math.max(80, f2), t + dur);
+          gain.gain.setValueAtTime(0.0001, t);
+          gain.gain.exponentialRampToValueAtTime(0.045, t + 0.008);
+          gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(c.destination);
+
+          osc.start(t);
+          osc.stop(t + dur + 0.015);
+        }
+
+        return { unlock, beep };
+      })();
+
+      function playUiSound(type) {
+        try { WMS_UI_SOUND.beep(type); } catch (_) {}
+      }
+
+      // Browsers block audio until the user interacts with the page.
+      // Unlock on the first meaningful interaction; no audio autoplay is forced.
+      ['pointerdown', 'keydown', 'touchstart'].forEach(evt => {
+        document.addEventListener(evt, () => WMS_UI_SOUND.unlock(), { once: true, capture: true });
+      });
+
+      function initWmsUiSounds() {
+        // Form/input feedback
+        document.addEventListener('change', (e) => {
+          if (e.target.matches('input, select, textarea')) playUiSound('input');
+        }, true);
+
+        // Generic button feedback, excluding noisy navigation and AI typing.
+        document.addEventListener('click', (e) => {
+          const btn = e.target.closest('button, [role="button"]');
+          if (!btn) return;
+          if (
+            btn.closest('#aiChat') ||
+            btn.id === 'aiVoiceBtn' ||
+            btn.classList.contains('ai-chip')
+          ) return;
+
+          if (
+            btn.id === 'matrixQtySave' ||
+            /simpan|save|submit|proses|confirm|konfirmasi/i.test(btn.textContent || '')
+          ) {
+            playUiSound('save');
+          } else {
+            playUiSound('click');
+          }
+        }, true);
+
+        // Global success/error toast hooks.
+        const originalShowAlert = window.showAlert;
+        if (typeof originalShowAlert === 'function' && !window.__wmsShowAlertWrapped) {
+          window.showAlert = function(title, message, ...args) {
+            const text = `${title || ''} ${message || ''}`;
+            playUiSound(/gagal|error|failed|tidak berhasil/i.test(text) ? 'error' : 'success');
+            return originalShowAlert.call(this, title, message, ...args);
+          };
+          window.__wmsShowAlertWrapped = true;
+        }
+      }
+
+      function initAiCopilotSidebar() {
+        const sidebar = document.getElementById('aiSidebar');
+        const tab = document.getElementById('aiSidebarTab');
+        const panel = document.getElementById('aiCopilotPanel');
+        const close = document.getElementById('aiCopilotClose');
+        if (!sidebar || !tab || !panel) return;
+
+        let pinned = false;
+
+        const setOpen = (open) => {
+          pinned = !!open;
+          sidebar.classList.toggle('is-open', pinned);
+          tab.setAttribute('aria-expanded', pinned ? 'true' : 'false');
+          panel.setAttribute('aria-hidden', pinned ? 'false' : 'true');
+        };
+
+        tab.addEventListener('click', (e) => {
+          e.preventDefault();
+          setOpen(!pinned);
+          if (pinned) {
+            setTimeout(() => document.getElementById('aiInput')?.focus(), 80);
+          }
+        });
+
+        close?.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setOpen(false);
+        });
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && pinned) setOpen(false);
+        });
+
+        // Hover opens as a preview. Clicking pins the panel open.
+        sidebar.addEventListener('mouseenter', () => {
+          if (!pinned) sidebar.classList.add('is-open');
+        });
+        sidebar.addEventListener('mouseleave', () => {
+          if (!pinned) sidebar.classList.remove('is-open');
+        });
+      }
+
+      function initVoiceAssistant() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const btn = document.getElementById('aiVoiceBtn');
+        const input = document.getElementById('aiInput');
+        const send = document.getElementById('aiSendBtn');
+
+        if (send) send.addEventListener('click', () => aiAsk(input.value, true));
+        const apiState = document.getElementById('aiApiState');
+        if (apiState) apiState.textContent = ' | AI API: menunggu koneksi';
+        if (input) input.addEventListener('keydown', e => {
+          if (e.key === 'Enter') aiAsk(input.value, true);
+        });
+        document.querySelectorAll('.ai-chip').forEach(chip => {
+          chip.addEventListener('click', () => aiAsk(chip.dataset.ai || '', true));
+        });
+
+        if (!btn) return;
+        if (!SpeechRecognition) {
+          btn.title = 'Voice input tidak didukung browser ini';
+          btn.addEventListener('click', () => {
+            aiAddMessage('assistant', 'Browser ini belum mendukung input suara. Coba Google Chrome atau Microsoft Edge.');
+          });
+          return;
+        }
+
+        recognition = new SpeechRecognition();
+        recognition.lang = 'id-ID';
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.maxAlternatives = 1;
+
+        recognition.onstart = () => {
+          isListening = true;
+          btn.classList.add('listening');
+          btn.textContent = '⏹️';
+          aiSetStatus('Mendengarkan…', true);
+        };
+        recognition.onresult = event => {
+          let transcript = '';
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            transcript += event.results[i][0].transcript;
+          }
+          if (input) input.value = transcript;
+          if (handleWakePhrase(transcript)) {
+            input.value = '';
+            try { recognition.stop(); } catch(e) {}
+          }
+        };
+        recognition.onerror = event => {
+          console.warn('Speech recognition:', event.error);
+          aiSetStatus('Siap membantu');
+          if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+            aiAddMessage('assistant', 'Akses mikrofon belum diizinkan. Silakan izinkan microphone untuk situs aplikasi ini.');
+          }
+        };
+        recognition.onend = () => {
+          isListening = false;
+          btn.classList.remove('listening');
+          btn.textContent = '🎙️';
+          aiSetStatus('Siap membantu');
+          const spoken = input ? input.value.trim() : '';
+          if (spoken && !spoken.toLowerCase().includes(AI_WAKE_PHRASE)) {
+            // Manual voice mode: process spoken command even without wake phrase.
+            aiAsk(spoken, true);
+          }
+        };
+
+        btn.addEventListener('click', () => {
+          if (isListening) recognition.stop();
+          else {
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            recognition.start();
+          }
+        });
+      }
+
+      // Start after the existing app initialization has loaded its data.
+      const oldWindowOnload = window.onload;
+      window.addEventListener('load', () => {
+        setTimeout(initVoiceAssistant, 300);
+      });
+
+      function mockResponse(action) {
+          return new Promise(resolve => {
+              setTimeout(() => {
+                  if(action === 'getMasterData') resolve([
+                    {sku:'121-701-0007', segment:'Retail', desc:'DRV MRTR D-1 PRKT BATA RINGAN-40KG-RTL'}
+                  ]);
+                  else if(action === 'getTodayRecords') resolve([]);
+                  else if(action === 'submitData' || action === 'updateProductParams') resolve({status:'success'});
+                   else if(action === 'aiChat') resolve({status:'error', message:'AI server action belum dikonfigurasi'});
+                  else if(action.includes('getReportData')) resolve({summary: [{segment:'Retail', sku:'121-701-0007', desc:'DRV MRTR D-1 PRKT BATA RINGAN-40KG-RTL', qty:1000, maxAge:5, status:'Aman'}]});
+                  else if(action.includes('getFifoRecommendation')) resolve({bin:'FG-A', lot:'123', qty:1000});
+              }, 200);
+          });
+      }
+    
+      initAiCopilotSidebar();
+
+      initWmsUiSounds();
+</script>
+  </body>
+</html>
